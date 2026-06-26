@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { getPool } from "@/lib/db";
+import { getPool, initDbSchema } from "@/lib/db";
 
 export async function GET(
   request: NextRequest,
@@ -24,8 +24,9 @@ export async function GET(
     // If not found locally, fetch from persistent PostgreSQL database
     const dbPool = getPool();
     if (dbPool) {
-      console.log(`[FILE SERVICE] Retrieving file ${filename} from PostgreSQL...`);
+      console.log(`[FILE SERVICE] DATABASE_URL detected. Retrieving file ${filename} from PostgreSQL...`);
       try {
+        await initDbSchema();
         const { rows } = await dbPool.query(
           "SELECT mime_type, data_base64 FROM uploaded_files WHERE filename = $1",
           [filename]
@@ -44,9 +45,11 @@ export async function GET(
           console.log(`[FILE SERVICE] Restored ${filename} from database cache`);
         } else {
           console.log(`[FILE SERVICE] File ${filename} not found in PostgreSQL.`);
+          return new NextResponse("File not found in database", { status: 404 });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error(`[FILE SERVICE] Database retrieval error for ${filename}:`, err);
+        return new NextResponse(`Database retrieval error: ${err.message}`, { status: 500 });
       }
     } else {
       console.log(`[FILE SERVICE] DATABASE_URL not set. Serving file ${filename} from local storage fallback.`);

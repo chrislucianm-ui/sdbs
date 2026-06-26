@@ -3,7 +3,7 @@
 import fs from "fs";
 import path from "path";
 import { getAdminRole } from "@/app/actions";
-import { getPool } from "./db";
+import { getPool, initDbSchema } from "./db";
 
 function getMimeType(ext: string): string {
   switch (ext.toLowerCase()) {
@@ -26,8 +26,9 @@ function getMimeType(ext: string): string {
 async function saveFileToDb(filename: string, buffer: Buffer, mimeType: string): Promise<void> {
   const dbPool = getPool();
   if (dbPool) {
-    console.log(`[DATABASE] Uploading file ${filename} to PostgreSQL...`);
+    console.log(`[DATABASE] DATABASE_URL detected. Uploading file ${filename} to PostgreSQL...`);
     try {
+      await initDbSchema();
       const base64 = buffer.toString("base64");
       await dbPool.query(
         `INSERT INTO uploaded_files (filename, mime_type, data_base64) VALUES ($1, $2, $3)
@@ -35,8 +36,9 @@ async function saveFileToDb(filename: string, buffer: Buffer, mimeType: string):
         [filename, mimeType, base64]
       );
       console.log(`[DATABASE] Persistent upload stored in PostgreSQL: ${filename}`);
-    } catch (e) {
-      console.error(`[DATABASE] Failed to store persistent upload ${filename} in PostgreSQL:`, e);
+    } catch (e: any) {
+      console.error(`[DATABASE] CRITICAL: Failed to store persistent upload ${filename} in PostgreSQL:`, e);
+      throw new Error(`Production database file write failed: ${e.message}`);
     }
   } else {
     console.log(`[DATABASE] DATABASE_URL not set. Saving file ${filename} locally only.`);
