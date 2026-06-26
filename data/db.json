@@ -1,0 +1,1999 @@
+{
+  "inquiries": [
+    {
+      "name": "gixer",
+      "parentName": "turd",
+      "email": "hhhhhh@gmail.com",
+      "phone": "66666666666",
+      "grade": "Class 9",
+      "message": "noiceee",
+      "id": "inq_ezkm8gt",
+      "status": "Pending",
+      "createdAt": "2026-06-17T10:52:47.996Z",
+      "smsStatus": "failure",
+      "waStatus": "failure",
+      "smsError": "Authentication Error - invalid username",
+      "waError": "Authentication Error - invalid username"
+    },
+    {
+      "name": "chris",
+      "parentName": "Mathews",
+      "email": "chrislucianm@gmail.com",
+      "phone": "8738882912",
+      "grade": "Class 9",
+      "message": "df asdf sdaf",
+      "id": "inq_uyymfv7",
+      "status": "Pending",
+      "createdAt": "2026-06-17T11:15:38.847Z",
+      "smsStatus": "success",
+      "waStatus": "failure",
+      "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
+    },
+    {
+      "name": "Chris",
+      "parentName": "###",
+      "email": "chrislucianm@gmail.com",
+      "phone": "8738882912",
+      "grade": "Class 11 - Science",
+      "message": "",
+      "id": "inq_y9dipc4",
+      "status": "Pending",
+      "createdAt": "2026-06-23T07:44:53.685Z",
+      "smsStatus": "success",
+      "waStatus": "failure",
+      "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
+    },
+    {
+      "name": "Sheryl",
+      "parentName": "Sabrina",
+      "email": "maria.sheryl.026@gmail.com",
+      "phone": "7991379682",
+      "grade": "Class 11 - Humanities",
+      "message": "Hi",
+      "id": "inq_yv3nrb6",
+      "status": "Pending",
+      "createdAt": "2026-06-23T13:41:29.333Z",
+      "smsStatus": "success",
+      "waStatus": "failure",
+      "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
+    },
+    {
+      "name": "fgfg",
+      "parentName": "gfdgdf",
+      "email": "chrislucianm@gmail.com",
+      "phone": "8738882912",
+      "grade": "Class 1-5",
+      "message": "hh",
+      "id": "inq_tryrr85",
+      "status": "Pending",
+      "createdAt": "2026-06-23T13:53:12.342Z",
+      "smsStatus": "success",
+      "waStatus": "failure",
+      "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
+    }
+  ],
+  "notices": [
+    {
+      "id": "n1",
+      "title": "Online Admission Registration Open for 2026-2027",
+      "content": "Applications are invited for admissions to classes I to IX & XI. Fill out the online inquiry form to schedule an interactive session.",
+      "type": "admission",
+      "date": "2026-06-10",
+      "isActive": true
+    },
+    {
+      "id": "n2",
+      "title": "U.P. Board & CBSE Board Examinations Merit List",
+      "content": "Congratulations to our toppers! St. D.B. Inter College & St. John Bosco School scholars achieve 100% success rate with top merit ranks.",
+      "type": "academic",
+      "date": "2026-05-28",
+      "isActive": true
+    },
+    {
+      "id": "n3",
+      "title": "Annual Sports Meet - Bosco Shield 2026",
+      "content": "The annual sports championship event will commence on November 15th. Student registrations for tracks and field events open next week.",
+      "type": "event",
+      "date": "2026-06-05",
+      "isActive": true
+    }
+  ],
+  "achievements": [
+    {
+      "key": "students",
+      "value": "3,200+",
+      "label": "Active Minds"
+    },
+    {
+      "key": "teachers",
+      "value": "30",
+      "label": "Expert Educators"
+    },
+    {
+      "key": "years",
+      "value": "49+",
+      "label": "Years of Legacy"
+    },
+    {
+      "key": "success",
+      "value": "99.8%",
+      "label": "Academic Success"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "t1",
+      "name": "Mollie Pereira",
+      "role": "Student",
+      "content": "The school provides an excellent learning environment. Security on campus is very good, making students feel safe. There are many extracurricular activities that keep students engaged and active. The faculty is highly specialized and professional, ensuring quality education.",
+      "rating": 5
+    },
+    {
+      "id": "t2",
+      "name": "Samman Mishra",
+      "role": "Parent",
+      "content": "An excellent educational experience with a strong emphasis on quality learning and holistic development. The school helped students grow not only academically but also through sports, life skills and personality development.",
+      "rating": 5
+    },
+    {
+      "id": "t3",
+      "name": "R K Tiwari",
+      "role": "Parent",
+      "content": "Professional faculty, relevant curriculum, resourceful library and a safe learning environment. Clean facilities and multiple opportunities help students achieve their full potential.",
+      "rating": 5
+    }
+  ],
+  "settings": {
+    "smsNotificationPhone": "+91 8738882912",
+    "schoolName": "",
+    "schoolSubName": "",
+    "schoolLogo": "/uploads/1782385654593_ico__1_.jpg",
+    "faviconUrl": "/uploads/1782202034553_ico__1_.png",
+    "copyrightText": "© 2026 St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. All Rights Reserved.",
+    "facebookUrl": "",
+    "instagramUrl": "https://www.instagram.com/st.d.b.i.c_st.j.b.s?igsh=MTZzNDc2Y3ZidW10ag==",
+    "youtubeUrl": ""
+  },
+  "notificationLogs": [
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_tryrr85",
+      "inquiryName": "fgfg",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_4z3dksq",
+      "createdAt": "2026-06-23T13:53:13.157Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_tryrr85",
+      "inquiryName": "fgfg",
+      "status": "success",
+      "id": "log_0kvoghv",
+      "createdAt": "2026-06-23T13:53:12.848Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_yv3nrb6",
+      "inquiryName": "Sheryl",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_1zq9dgo",
+      "createdAt": "2026-06-23T13:41:30.308Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_yv3nrb6",
+      "inquiryName": "Sheryl",
+      "status": "success",
+      "id": "log_edmvzu3",
+      "createdAt": "2026-06-23T13:41:29.995Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_y9dipc4",
+      "inquiryName": "Chris",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_m2n4bg9",
+      "createdAt": "2026-06-23T07:44:54.575Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_y9dipc4",
+      "inquiryName": "Chris",
+      "status": "success",
+      "id": "log_q8hsx2b",
+      "createdAt": "2026-06-23T07:44:54.260Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_3ygiyfu",
+      "createdAt": "2026-06-23T07:42:52.887Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_ecn85pp",
+      "createdAt": "2026-06-23T07:42:52.565Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_yo1f01s",
+      "createdAt": "2026-06-21T10:53:56.500Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_yr5vcew",
+      "createdAt": "2026-06-21T10:53:55.776Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_uyymfv7",
+      "inquiryName": "chris",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_vfrru0l",
+      "createdAt": "2026-06-17T11:15:39.706Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_uyymfv7",
+      "inquiryName": "chris",
+      "status": "success",
+      "id": "log_gsippb8",
+      "createdAt": "2026-06-17T11:15:39.393Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_vlo7law",
+      "createdAt": "2026-06-17T11:13:56.229Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_e4dqqar",
+      "createdAt": "2026-06-17T11:13:55.926Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "fetch failed",
+      "id": "log_lrj58cd",
+      "createdAt": "2026-06-17T11:13:53.970Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "fetch failed",
+      "id": "log_x7xtqxw",
+      "createdAt": "2026-06-17T11:13:53.947Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_x6s4ck9",
+      "createdAt": "2026-06-17T11:11:53.462Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_1p8zgvk",
+      "createdAt": "2026-06-17T11:11:53.123Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_e4iwydd",
+      "createdAt": "2026-06-17T11:11:28.158Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The number 873888XXXX is unverified. Trial accounts cannot send messages to unverified numbers; verify 873888XXXX at twilio.com/user/account/phone-numbers/verified, or purchase a Twilio number to send messages to unverified numbers",
+      "id": "log_ujovxyi",
+      "createdAt": "2026-06-17T11:11:27.799Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_llbuhye",
+      "createdAt": "2026-06-17T11:10:47.639Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The number 873888XXXX is unverified. Trial accounts cannot send messages to unverified numbers; verify 873888XXXX at twilio.com/user/account/phone-numbers/verified, or purchase a Twilio number to send messages to unverified numbers",
+      "id": "log_7uk2vf6",
+      "createdAt": "2026-06-17T11:10:47.246Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_wnwl7it",
+      "createdAt": "2026-06-17T11:10:11.467Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "success",
+      "id": "log_mfmpd6d",
+      "createdAt": "2026-06-17T11:10:11.121Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_ezkm8gt",
+      "inquiryName": "gixer",
+      "status": "failure",
+      "errorMessage": "Authentication Error - invalid username",
+      "id": "log_togs3tv",
+      "createdAt": "2026-06-17T10:52:48.774Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_ezkm8gt",
+      "inquiryName": "gixer",
+      "status": "failure",
+      "errorMessage": "Authentication Error - invalid username",
+      "id": "log_s0s57pg",
+      "createdAt": "2026-06-17T10:52:48.507Z"
+    },
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "Authentication Error - invalid username",
+      "id": "log_kob8psb",
+      "createdAt": "2026-06-17T10:42:25.327Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryName": "Test Notification",
+      "status": "failure",
+      "errorMessage": "Authentication Error - invalid username",
+      "id": "log_cezm7p8",
+      "createdAt": "2026-06-17T10:42:25.075Z"
+    }
+  ],
+  "contactInfo": {
+    "phoneNumbers": [
+      "+91 96957 79756",
+      "+91 ------"
+    ],
+    "whatsappNumber": "+91 96957 79756",
+    "emails": [
+      "admission@stdbboscoschool.ac.in",
+      "contact@stdbboscoschool.ac.in"
+    ],
+    "address": "St. D.B. Inter College & St. John Bosco School, Shri Narayan Marg, Gurunanak Nagar Gali 3, Refugee Colony, PAC Colony, Naini, Prayagraj, Uttar Pradesh - 211008, India",
+    "googleMapsLink": "https://maps.app.goo.gl/wGFHtQZcjo9RdrD17",
+    "officeTimings": "Monday - Saturday: 08:00 AM - 01:30 PM (IST)\nClosed on Sundays and Gazetted Holidays",
+    "mapEmbedSrc": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3603.626786358362!2d81.8761168!3d25.3837965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39854a851f1f619b%3A0x48c035cc90aae415!2sSt.D.B.Inter%20Coll!5e0!3m2!1sen!2sin!4v1718123456789!5m2!1sen!2sin"
+  },
+  "homepageContent": {
+    "heroTitle": "ST. D.B. INTER COLLEGE",
+    "heroSubtitle": "ST. JOHN BOSCO SCHOOL",
+    "heroDescription": "\"48+ Years of Academic Excellence, Character Building and Student Success\"",
+    "admissionsBtnText": "Admissions open",
+    "directorsMessage": {
+      "name": "Sabrina Coutinho",
+      "designation": "Director",
+      "message": "Dear Parents, Students and Well-Wishers,\n\nWelcome to ST. D.B. Inter College & St. John Bosco School.\n\nAt our institution, education extends beyond textbooks and examinations. We are committed to nurturing young minds through academic excellence, strong values, discipline, creativity and character development.\n\nOur goal is to create a learning environment where students are encouraged to think independently, act responsibly and grow into confident individuals prepared for future challenges.\n\nWe believe every child possesses unique potential, and through the combined efforts of dedicated educators, supportive families and a vibrant school community, that potential can be transformed into achievement.\n\nWe thank all parents and well-wishers for their continued trust and partnership in our educational journey.",
+      "signature": "Sabrina Coutinho",
+      "photo": "/director.jpg"
+    }
+  },
+  "admissionsConfig": {
+    "isAdmissionsEnabled": true,
+    "openDate": "2026-06-10",
+    "closeDate": "2026-07-31",
+    "academicYear": "2026-27"
+  },
+  "gallery": [
+    {
+      "id": "g1",
+      "category": "Campus",
+      "title": "Main Courtyard & Blocks",
+      "type": "image",
+      "url": "/campus.jpg",
+      "description": "The primary academic courtyard of St. John Bosco School, Naini, Prayagraj."
+    },
+    {
+      "id": "g2",
+      "category": "Classrooms",
+      "title": "Senior Wing Classrooms",
+      "type": "image",
+      "url": "/classroom.jpg",
+      "description": "Well-ventilated academic rooms located in the main red-and-white courtyard blocks."
+    },
+    {
+      "id": "g3",
+      "category": "Events",
+      "title": "Courtyard Gathering Assembly",
+      "type": "image",
+      "url": "/assembly.jpg",
+      "description": "The spacious open courtyard hosting school celebrations and morning assemblies."
+    },
+    {
+      "id": "g4",
+      "category": "Sports",
+      "title": "Physical Gymnastics Stunts",
+      "type": "image",
+      "url": "/yoga.jpg",
+      "description": "Physical education demonstrations and balance exercises on courtyard mats."
+    },
+    {
+      "id": "g5",
+      "category": "Students",
+      "title": "Scholars Cabinet Assembly",
+      "type": "image",
+      "url": "/scholars.jpg",
+      "description": "Corridors linking classrooms where students collaborate on board preparations."
+    },
+    {
+      "id": "g6",
+      "category": "Activities",
+      "title": "National Day Human Pyramid",
+      "type": "image",
+      "url": "/pyramid.jpg",
+      "description": "Scholars building human pyramid formations holding the Indian flag."
+    },
+    {
+      "id": "g7",
+      "category": "Campus",
+      "title": "Aerial Courtyard Formations",
+      "type": "image",
+      "url": "/formation.jpg",
+      "description": "Aerial overview of student assemblies gathered around floral Rangoli patterns."
+    },
+    {
+      "id": "g8",
+      "category": "Activities",
+      "title": "Official Faculty Council",
+      "type": "image",
+      "url": "/teachers.jpg",
+      "description": "Our certified teachers and administrative staff group photo."
+    },
+    {
+      "id": "g9",
+      "category": "Activities",
+      "title": "Guest Flower Felicitation",
+      "type": "image",
+      "url": "/bouquet.jpg",
+      "description": "Scholars welcoming distinguished chief guests on the academic stage."
+    },
+    {
+      "id": "g10",
+      "category": "Events",
+      "title": "School Drum Band March",
+      "type": "image",
+      "url": "/march.jpg",
+      "description": "Student band march in red carpet courtyard ceremony."
+    },
+    {
+      "id": "g11",
+      "category": "Campus",
+      "title": "Town National Parade March",
+      "type": "image",
+      "url": "/parade.jpg",
+      "description": "Parade march event in Naini, Prayagraj, celebrating Azadi Ka Amrit Mahotsav."
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+      "name": "Super Administrator",
+      "role": "owner"
+    },
+    {
+      "username": "principal",
+      "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+      "name": "School Principal",
+      "role": "principal"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "audit_97ftam3",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T06:03:34.262Z"
+    },
+    {
+      "id": "audit_1q4eg3m",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T16:58:36.510Z"
+    },
+    {
+      "id": "audit_klfpp2w",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_CREATE",
+      "details": "Created popup campaign (image)",
+      "timestamp": "2026-06-25T16:49:18.224Z"
+    },
+    {
+      "id": "audit_oire2pc",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T16:48:55.884Z"
+    },
+    {
+      "id": "audit_s4kndgu",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_DELETE",
+      "details": "Deleted popup record: pop_15qv0sj",
+      "timestamp": "2026-06-25T12:31:31.707Z"
+    },
+    {
+      "id": "audit_kyqz8m7",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_CREATE",
+      "details": "Created popup campaign (image)",
+      "timestamp": "2026-06-25T12:31:16.274Z"
+    },
+    {
+      "id": "audit_gm2tnrr",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_DELETE",
+      "details": "Deleted popup record: pop_fjqd4pl",
+      "timestamp": "2026-06-25T12:19:42.591Z"
+    },
+    {
+      "id": "audit_d0vqtgb",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_DELETE",
+      "details": "Deleted popup record: pop_fahw111",
+      "timestamp": "2026-06-25T12:17:30.876Z"
+    },
+    {
+      "id": "audit_0itmun8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_CREATE",
+      "details": "Created popup: rtt (achievement)",
+      "timestamp": "2026-06-25T12:16:33.441Z"
+    },
+    {
+      "id": "audit_r0qfhpv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "POPUP_CREATE",
+      "details": "Created popup: champ (achievement)",
+      "timestamp": "2026-06-25T12:15:48.649Z"
+    },
+    {
+      "id": "audit_ppukwkq",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T12:14:23.442Z"
+    },
+    {
+      "id": "audit_mm6wkab",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T11:47:51.024Z"
+    },
+    {
+      "id": "audit_ggvei3i",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T11:47:47.985Z"
+    },
+    {
+      "id": "audit_zdy8ciu",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T11:47:47.968Z"
+    },
+    {
+      "id": "audit_vvhwe61",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-25T11:47:47.953Z"
+    },
+    {
+      "id": "audit_tf0m49u",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T11:44:25.777Z"
+    },
+    {
+      "id": "audit_v1lcbts",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T11:40:33.643Z"
+    },
+    {
+      "id": "audit_k91dx9g",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T11:40:30.357Z"
+    },
+    {
+      "id": "audit_rbhnf4y",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T11:40:30.251Z"
+    },
+    {
+      "id": "audit_0oem46p",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-25T11:40:30.141Z"
+    },
+    {
+      "id": "audit_m6ubb7s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T11:22:03.512Z"
+    },
+    {
+      "id": "audit_a977gxz",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T11:22:03.025Z"
+    },
+    {
+      "id": "audit_t0imtgd",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-25T11:22:02.551Z"
+    },
+    {
+      "id": "audit_iz3jzcv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_DELETE",
+      "details": "Deleted user manager",
+      "timestamp": "2026-06-25T11:21:41.141Z"
+    },
+    {
+      "id": "audit_d4bhuv7",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T11:21:34.385Z"
+    },
+    {
+      "id": "audit_q26apuz",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T11:21:02.616Z"
+    },
+    {
+      "id": "audit_j92vccc",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_CREATE",
+      "details": "Created user manager (principal)",
+      "timestamp": "2026-06-25T11:20:45.466Z"
+    },
+    {
+      "id": "audit_hkje585",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T11:19:45.712Z"
+    },
+    {
+      "id": "audit_zsgplul",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T11:07:37.170Z"
+    },
+    {
+      "id": "audit_ua3itf3",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T11:07:35.812Z"
+    },
+    {
+      "id": "audit_7jm7jbu",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T11:07:35.799Z"
+    },
+    {
+      "id": "audit_2gr6f3s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-25T11:07:35.784Z"
+    },
+    {
+      "id": "audit_oa8jq8e",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T11:07:20.418Z"
+    },
+    {
+      "id": "audit_u4nxca8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T11:06:48.306Z"
+    },
+    {
+      "id": "audit_d42wlrv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T11:06:45.759Z"
+    },
+    {
+      "id": "audit_sta90x0",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T11:06:45.743Z"
+    },
+    {
+      "id": "audit_be0lrch",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-25T11:06:45.726Z"
+    },
+    {
+      "id": "audit_dic4w8n",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T11:06:20.136Z"
+    },
+    {
+      "id": "audit_ns92bhe",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-25T10:48:36.268Z"
+    },
+    {
+      "id": "audit_g8brfdb",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-25T10:48:34.721Z"
+    },
+    {
+      "id": "audit_bxdgmvg",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-25T10:48:34.706Z"
+    },
+    {
+      "id": "audit_cesb5u2",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-25T10:48:34.691Z"
+    },
+    {
+      "id": "audit_0ta37v5",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-25T10:48:31.207Z"
+    },
+    {
+      "id": "audit_mmppxqv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:53:30.686Z"
+    },
+    {
+      "id": "audit_q8t5x39",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:53:29.422Z"
+    },
+    {
+      "id": "audit_4owd2kn",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:53:28.594Z"
+    },
+    {
+      "id": "audit_sitgknr",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "NOTICE_DELETE",
+      "details": "Deleted notice not_uwrc3rp",
+      "timestamp": "2026-06-24T17:53:26.542Z"
+    },
+    {
+      "id": "audit_0os5lej",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:52:32.020Z"
+    },
+    {
+      "id": "audit_nipogm8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:31:08.092Z"
+    },
+    {
+      "id": "audit_j0v4sel",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ANNOUNCEMENT_CREATE",
+      "details": "Published announcement: dfdg",
+      "timestamp": "2026-06-24T17:31:05.087Z"
+    },
+    {
+      "id": "audit_vht8isn",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:30:44.505Z"
+    },
+    {
+      "id": "audit_s30l5is",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:23:39.755Z"
+    },
+    {
+      "id": "audit_vzz8dnv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:23:37.411Z"
+    },
+    {
+      "id": "audit_pxurx9n",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:23:36.599Z"
+    },
+    {
+      "id": "audit_550vzh4",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ANNOUNCEMENT_DELETE",
+      "details": "Deleted announcement not_7i1p70c",
+      "timestamp": "2026-06-24T17:23:34.990Z"
+    },
+    {
+      "id": "audit_yc1gd1u",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:23:30.798Z"
+    },
+    {
+      "id": "audit_p7zzwdi",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:18:53.083Z"
+    },
+    {
+      "id": "audit_f3343x0",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:16:02.696Z"
+    },
+    {
+      "id": "audit_ldrczq1",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:15:13.479Z"
+    },
+    {
+      "id": "audit_mx40o8d",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ANNOUNCEMENT_CREATE",
+      "details": "Published announcement: syllabus",
+      "timestamp": "2026-06-24T17:15:09.811Z"
+    },
+    {
+      "id": "audit_hgwqwjk",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T17:14:33.399Z"
+    },
+    {
+      "id": "audit_0ek2kct",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-24T17:13:39.893Z"
+    },
+    {
+      "id": "audit_m3fmtch",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-24T16:42:08.435Z"
+    },
+    {
+      "id": "audit_6rw512x",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-24T16:42:08.401Z"
+    },
+    {
+      "id": "audit_58459bi",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-24T16:42:08.375Z"
+    },
+    {
+      "id": "audit_pgpy5hk",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-24T16:41:59.100Z"
+    },
+    {
+      "id": "audit_zo8ux2e",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-24T16:41:59.037Z"
+    },
+    {
+      "id": "audit_k6pnu7w",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-24T16:41:58.993Z"
+    },
+    {
+      "id": "audit_1vedln2",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T16:41:23.449Z"
+    },
+    {
+      "id": "audit_wilg7rh",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-24T09:40:50.580Z"
+    },
+    {
+      "id": "audit_6dlike5",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_etnjg4c",
+      "timestamp": "2026-06-23T14:25:58.282Z"
+    },
+    {
+      "id": "audit_sowdn6g",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T14:25:52.788Z"
+    },
+    {
+      "id": "audit_5o64cg4",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T14:25:38.286Z"
+    },
+    {
+      "id": "audit_ro9k7ky",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: hh (Campus)",
+      "timestamp": "2026-06-23T14:25:33.679Z"
+    },
+    {
+      "id": "audit_3nhs0ho",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_1rcl550",
+      "timestamp": "2026-06-23T14:25:23.186Z"
+    },
+    {
+      "id": "audit_inxjaz7",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_test123",
+      "timestamp": "2026-06-23T14:25:18.890Z"
+    },
+    {
+      "id": "audit_qvguhr2",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: assembl (Campus)",
+      "timestamp": "2026-06-23T14:25:01.731Z"
+    },
+    {
+      "id": "audit_2jmjnvs",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_quyv01x",
+      "timestamp": "2026-06-23T14:13:15.021Z"
+    },
+    {
+      "id": "audit_tm4unll",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T14:13:09.473Z"
+    },
+    {
+      "id": "audit_eldqzye",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T14:12:52.340Z"
+    },
+    {
+      "id": "audit_y41xasp",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: assembly (Campus)",
+      "timestamp": "2026-06-23T14:12:36.245Z"
+    },
+    {
+      "id": "audit_bz15w52",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_9ojcjt9",
+      "timestamp": "2026-06-23T14:11:20.848Z"
+    },
+    {
+      "id": "audit_4s64bqk",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: assembly (Campus)",
+      "timestamp": "2026-06-23T14:11:09.700Z"
+    },
+    {
+      "id": "audit_66i7a0s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_0jleggh",
+      "timestamp": "2026-06-23T14:11:00.070Z"
+    },
+    {
+      "id": "audit_0szgvcf",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: fff (Events)",
+      "timestamp": "2026-06-23T14:08:48.973Z"
+    },
+    {
+      "id": "audit_ink3axs",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_9zupst0",
+      "timestamp": "2026-06-23T14:08:09.207Z"
+    },
+    {
+      "id": "audit_kxny8et",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: Assembly (Events)",
+      "timestamp": "2026-06-23T14:03:52.011Z"
+    },
+    {
+      "id": "audit_7meu2wx",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T14:03:02.383Z"
+    },
+    {
+      "id": "audit_j1u4opo",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T14:01:36.527Z"
+    },
+    {
+      "id": "audit_dujoes2",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T14:01:34.225Z"
+    },
+    {
+      "id": "audit_01fekub",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T14:01:34.138Z"
+    },
+    {
+      "id": "audit_7yds642",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T14:01:34.046Z"
+    },
+    {
+      "id": "audit_axczrkb",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T14:01:20.543Z"
+    },
+    {
+      "id": "audit_p2z6yiz",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T14:01:20.274Z"
+    },
+    {
+      "id": "audit_3ssbkeu",
+      "username": "principal",
+      "name": "School Principal",
+      "role": "principal",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T14:01:18.559Z"
+    },
+    {
+      "id": "audit_gxuhe1q",
+      "username": "principal",
+      "name": "School Principal",
+      "role": "principal",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:46:04.043Z"
+    },
+    {
+      "id": "audit_i73x226",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:46:02.455Z"
+    },
+    {
+      "id": "audit_7k2mde0",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:46:00.655Z"
+    },
+    {
+      "id": "audit_vjviy40",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:45:59.371Z"
+    },
+    {
+      "id": "audit_pj9n1dj",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "PASSWORD_RESET",
+      "details": "Reset password for admin",
+      "timestamp": "2026-06-23T13:45:56.577Z"
+    },
+    {
+      "id": "audit_bm0vctg",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "PASSWORD_RESET",
+      "details": "Reset password for principal",
+      "timestamp": "2026-06-23T13:45:39.031Z"
+    },
+    {
+      "id": "audit_ftwn17y",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:45:34.702Z"
+    },
+    {
+      "id": "audit_pi0hjgf",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:45:26.241Z"
+    },
+    {
+      "id": "audit_5qg3try",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:44:58.974Z"
+    },
+    {
+      "id": "audit_uh1lxi7",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:44:07.129Z"
+    },
+    {
+      "id": "audit_q2p7zo4",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:42:17.497Z"
+    },
+    {
+      "id": "audit_bno5z4d",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T13:40:48.756Z"
+    },
+    {
+      "id": "audit_2fvibo9",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T13:40:48.597Z"
+    },
+    {
+      "id": "audit_w80u5sm",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T13:40:48.474Z"
+    },
+    {
+      "id": "audit_o2b6a4x",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:40:09.244Z"
+    },
+    {
+      "id": "audit_tjic2qp",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:38:57.419Z"
+    },
+    {
+      "id": "audit_n250489",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:38:33.111Z"
+    },
+    {
+      "id": "audit_vzs32wm",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:36:51.983Z"
+    },
+    {
+      "id": "audit_5ed1s29",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:36:30.260Z"
+    },
+    {
+      "id": "audit_oz0hrud",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T13:35:30.141Z"
+    },
+    {
+      "id": "audit_s8vu05s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T13:34:01.967Z"
+    },
+    {
+      "id": "audit_rotp0wo",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T08:21:01.242Z"
+    },
+    {
+      "id": "audit_5zn2h7j",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "HOMEPAGE_UPDATE",
+      "details": "Updated homepage hero or Principal message content",
+      "timestamp": "2026-06-23T08:20:43.736Z"
+    },
+    {
+      "id": "audit_dc6tupm",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "HOMEPAGE_UPDATE",
+      "details": "Updated homepage hero or Principal message content",
+      "timestamp": "2026-06-23T08:20:13.911Z"
+    },
+    {
+      "id": "audit_6c0mgzo",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:19:33.920Z"
+    },
+    {
+      "id": "audit_s8k1f6z",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:19:33.884Z"
+    },
+    {
+      "id": "audit_81b1emg",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-23T08:19:33.819Z"
+    },
+    {
+      "id": "audit_j3bmrs6",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:18:17.824Z"
+    },
+    {
+      "id": "audit_5szglts",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:18:17.754Z"
+    },
+    {
+      "id": "audit_uu3z8te",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Closed",
+      "timestamp": "2026-06-23T08:18:17.679Z"
+    },
+    {
+      "id": "audit_bblv7d5",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:17:58.339Z"
+    },
+    {
+      "id": "audit_cjsczzp",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:17:58.307Z"
+    },
+    {
+      "id": "audit_zuc10ww",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T08:17:58.227Z"
+    },
+    {
+      "id": "audit_obse0iy",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T08:17:35.237Z"
+    },
+    {
+      "id": "audit_uuzfksq",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T08:11:53.488Z"
+    },
+    {
+      "id": "audit_a9iqj8m",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:11:49.118Z"
+    },
+    {
+      "id": "audit_jdjv85b",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:11:49.073Z"
+    },
+    {
+      "id": "audit_8dbqlzy",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T08:11:48.993Z"
+    },
+    {
+      "id": "audit_uj6bb8e",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:07:51.358Z"
+    },
+    {
+      "id": "audit_b4gf4ge",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:07:51.279Z"
+    },
+    {
+      "id": "audit_idli2r4",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T08:07:51.201Z"
+    },
+    {
+      "id": "audit_3lzgfqm",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T08:07:44.410Z"
+    },
+    {
+      "id": "audit_lorilr8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T08:07:31.071Z"
+    },
+    {
+      "id": "audit_oq2okn4",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "SETTINGS_UPDATE",
+      "details": "Updated system and branding configuration settings",
+      "timestamp": "2026-06-23T08:07:17.649Z"
+    },
+    {
+      "id": "audit_il0hcr8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "CONTACT_UPDATE",
+      "details": "Updated school contact information details",
+      "timestamp": "2026-06-23T08:07:17.562Z"
+    },
+    {
+      "id": "audit_jh1t5vn",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "ADMISSIONS_CONFIG",
+      "details": "Updated admissions configuration. Status: Open",
+      "timestamp": "2026-06-23T08:07:17.452Z"
+    },
+    {
+      "id": "audit_96mpoah",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T07:59:26.775Z"
+    },
+    {
+      "id": "audit_q6guz81",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T07:57:50.558Z"
+    },
+    {
+      "id": "audit_2dvfrq1",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T07:52:52.487Z"
+    },
+    {
+      "id": "audit_uazhuzq",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "TEST_NOTIFY",
+      "details": "Dispatched test notifications to +91 8738882912",
+      "timestamp": "2026-06-23T07:42:52.890Z"
+    },
+    {
+      "id": "audit_w21e1t6",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T07:40:35.805Z"
+    },
+    {
+      "id": "audit_bv260l1",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-23T07:39:18.992Z"
+    },
+    {
+      "id": "audit_t6prgqn",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "HOMEPAGE_UPDATE",
+      "details": "Updated homepage hero or Principal message content",
+      "timestamp": "2026-06-23T07:39:04.779Z"
+    },
+    {
+      "id": "audit_9ztmkhk",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T07:38:51.662Z"
+    },
+    {
+      "id": "audit_jy2phom",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_DELETE",
+      "details": "Deleted gallery item gal_1txcjbb",
+      "timestamp": "2026-06-23T07:35:46.025Z"
+    },
+    {
+      "id": "audit_sys5b0o",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "GALLERY_ADD",
+      "details": "Added gallery item: Playground (Campus)",
+      "timestamp": "2026-06-23T07:35:11.902Z"
+    },
+    {
+      "id": "audit_yqce5hq",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-23T07:33:30.106Z"
+    },
+    {
+      "id": "audit_xq6hqto",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-21T10:55:30.217Z"
+    },
+    {
+      "id": "audit_paphpu2",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "TEST_NOTIFY",
+      "details": "Dispatched test notifications to +91 8738882912",
+      "timestamp": "2026-06-21T10:53:56.505Z"
+    },
+    {
+      "id": "audit_ja3il6c",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "STATISTICS_UPDATE",
+      "details": "Updated stat counter teachers to 30",
+      "timestamp": "2026-06-21T10:53:35.068Z"
+    },
+    {
+      "id": "audit_t2exeah",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-21T10:52:36.449Z"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann_1",
+      "title": "Founder's Day Celebration Golden Jubilee",
+      "content": "St. John Bosco School marks 50 years of educational service in Naini, Prayagraj. Cultural performances and alumni meet to be held in courtyard.",
+      "type": "general",
+      "date": "2026-06-12",
+      "isActive": true,
+      "isPinned": true,
+      "expiryDate": "",
+      "pdfUrl": ""
+    },
+    {
+      "id": "ann_2",
+      "title": "Inter-School Science & Tech Exhibition Awards",
+      "content": "Congratulations to our junior science cabinet scholars for winning the Prayagraj Science Innovation Shield.",
+      "type": "academic",
+      "date": "2026-06-18",
+      "isActive": true,
+      "isPinned": false,
+      "expiryDate": "",
+      "pdfUrl": ""
+    },
+    {
+      "id": "ann_3",
+      "title": "Annual Sports Meet - Bosco Shield 2026",
+      "content": "The annual sports championship event will commence on November 15th. Student registrations for tracks and field events open next week.",
+      "type": "event",
+      "date": "2026-06-20",
+      "isActive": true,
+      "isPinned": false,
+      "expiryDate": "",
+      "pdfUrl": ""
+    }
+  ],
+  "popups": [
+    {
+      "type": "image",
+      "isActive": true,
+      "imageUrl": "/uploads/popup_1782406155385_assembly.jpg.jpeg",
+      "buttonLink": "",
+      "id": "pop_o0igtf7",
+      "createdAt": "2026-06-25T16:49:18.218Z"
+    }
+  ]
+}

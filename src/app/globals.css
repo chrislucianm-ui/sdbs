@@ -1,0 +1,206 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-gold-50: #fefcf3;
+  --color-gold-100: #fdf6e2;
+  --color-gold-200: #fbe9b8;
+  --color-gold-300: #f7d584;
+  --color-gold-400: #f2ba4d;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b8912a;
+  --color-gold-700: #937021;
+  --color-gold-800: #73541b;
+  --color-gold-900: #573f17;
+  
+  --color-navy-950: #08121e;
+  --color-navy-900: #0a2540;
+  --color-navy-800: #14325c;
+  --color-navy-700: #1c4173;
+  
+  --color-brand-red-50: #fef2f2;
+  --color-brand-red-100: #fee2e2;
+  --color-brand-red-200: #fecaca;
+  --color-brand-red-500: #ef4444;
+  --color-brand-red-600: #dc2626;
+  --color-brand-red-700: #b91c1c;
+  --color-brand-red-800: #991b1b;
+  --color-brand-red-950: #450a0a;
+
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-outfit);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a2540;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar - Bright Theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+/* Glassmorphism Styles - Light Theme */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(10, 37, 64, 0.08);
+}
+
+.glass-panel-gold {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 10px 40px -10px rgba(10, 37, 64, 0.05);
+}
+
+.glass-nav {
+  background: rgba(250, 250, 250, 0.8);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(10, 37, 64, 0.05);
+}
+
+.glass-card-hover {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(10, 37, 64, 0.12);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 3D Typography Classes - Premium Depth */
+.perspective-container {
+  perspective: 1500px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* 3D Text Soft Shadows & Layers */
+.text-3d-layered {
+  text-shadow: 
+    0 1px 0 #cccccc,
+    0 2px 0 #c5c5c5,
+    0 3px 0 #bbbbbb,
+    0 4px 0 #b4b4b4,
+    0 5px 0 #a8a8a8,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+.text-stroke-gold {
+  -webkit-text-stroke: 1.5px rgba(212, 175, 55, 0.4);
+  color: transparent;
+}
+.text-stroke-gold:hover {
+  -webkit-text-stroke: 1.5px rgba(212, 175, 55, 0.9);
+}
+
+.text-stroke-brand-red {
+  -webkit-text-stroke: 1.5px rgba(185, 28, 28, 0.2);
+  color: transparent;
+}
+
+/* Premium Gold Text Gradient */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #b8912a 0%, #d4af37 50%, #f7d584 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-red-gradient-text {
+  background: linear-gradient(135deg, #450a0a 0%, #b91c1c 60%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-border-gradient {
+  border-image: linear-gradient(135deg, #d4af37, #b8912a) 1;
+}
+
+/* Custom Glow FX - Light Theme */
+.glow-gold {
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.15);
+}
+.glow-gold-hover:hover {
+  box-shadow: 0 0 45px rgba(212, 175, 55, 0.35);
+}
+
+.glow-brand-red-hover:hover {
+  box-shadow: 0 0 40px rgba(185, 28, 28, 0.15);
+}
+
+/* Horizontal Scroll Marquee Ticker */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Smooth Scrolling Support */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide other content when mobile navigation menu overlay is open to avoid bleeding/flicker and block scrolling */
+body.mobile-menu-active main,
+body.mobile-menu-active footer,
+body.mobile-menu-active #whatsapp-button {
+  display: none !important;
+}
+
+/* Reset header styling when mobile menu is active to ensure zero bleed-through of border/shadow */
+body.mobile-menu-active header {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Hide normal header desktop/mobile top-bar contents when mobile menu is active */
+body.mobile-menu-active header > div:first-child {
+  display: none !important;
+}
