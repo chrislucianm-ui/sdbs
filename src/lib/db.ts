@@ -160,33 +160,18 @@ const DB_PATH = IS_VERCEL
   ? path.join("/tmp", "db.json")
   : path.join(process.cwd(), "data", "db.json");
 
-function getSafeConnectionString(url: string): string {
-  try {
-    const match = url.match(/^(postgres|postgresql):\/\/([^:]+):(.*)@([^/]+)\/(.*)$/);
-    if (!match) return url;
-    const protocol = match[1];
-    const user = match[2];
-    const rawPassword = match[3];
-    const host = match[4];
-    const rest = match[5];
-    let password = rawPassword;
-    if (/[#?@:]/.test(rawPassword) && !rawPassword.includes("%")) {
-      password = encodeURIComponent(rawPassword);
-      console.log("[DATABASE] URL-encoded special characters in PostgreSQL password for URL parsing safety.");
-    }
-    return `${protocol}://${user}:${password}@${host}/${rest}`;
-  } catch (e) {
-    return url;
-  }
-}
-
 let poolInstance: Pool | null = null;
 
 export function getPool(): Pool | null {
-  const rawUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
-  if (!rawUrl) return null;
+  // Prevent database pool initialization during Next.js build phase to avoid build-time failures
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    console.log("[DATABASE] Next.js build phase detected. Skipping PostgreSQL pool initialization.");
+    return null;
+  }
+
+  const url = process.env.DATABASE_URL;
+  if (!url) return null;
   if (!poolInstance) {
-    const url = getSafeConnectionString(rawUrl);
     poolInstance = new Pool({
       connectionString: url,
       ssl: { rejectUnauthorized: false },
