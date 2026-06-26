@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { sendTwilioSMS, sendTwilioWhatsApp } from "./notifications";
+import { Pool } from "pg";
+import { revalidatePath } from "next/cache";
 
 export interface Inquiry {
   id: string;
@@ -157,6 +159,21 @@ const IS_VERCEL = !!process.env.VERCEL;
 const DB_PATH = IS_VERCEL
   ? path.join("/tmp", "db.json")
   : path.join(process.cwd(), "data", "db.json");
+
+let poolInstance: Pool | null = null;
+
+export function getPool(): Pool | null {
+  const url = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  if (!url) return null;
+  if (!poolInstance) {
+    poolInstance = new Pool({
+      connectionString: url,
+      ssl: { rejectUnauthorized: false },
+    });
+    console.log("[DATABASE] PostgreSQL Connection Pool initialized successfully.");
+  }
+  return poolInstance;
+}
 
 // Seed data
 const defaultDb: DbSchema = {
@@ -408,6 +425,57 @@ const defaultDb: DbSchema = {
   ],
 };
 
+const keysToVerify: (keyof DbSchema)[] = [
+  "inquiries",
+  "notices",
+  "achievements",
+  "testimonials",
+  "settings",
+  "contactInfo",
+  "homepageContent",
+  "admissionsConfig",
+  "gallery",
+  "users",
+  "auditLogs",
+  "notificationLogs",
+  "announcements",
+  "popups",
+];
+
+let schemaInitialized = false;
+
+async function initDbSchema() {
+  if (schemaInitialized) return;
+  const dbPool = getPool();
+  if (!dbPool) return;
+
+  const client = await dbPool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS cms_store (
+        key VARCHAR(255) PRIMARY KEY,
+        value JSONB NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS uploaded_files (
+        filename VARCHAR(255) PRIMARY KEY,
+        mime_type VARCHAR(100) NOT NULL,
+        data_base64 TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    schemaInitialized = true;
+    console.log("[DATABASE] Database schema tables verified/created successfully.");
+  } catch (error) {
+    console.error("[DATABASE] Error initializing database tables:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 function ensureDbFile() {
   const dir = path.dirname(DB_PATH);
   if (!fs.existsSync(dir)) {
@@ -431,19 +499,6 @@ function ensureDbFile() {
       const db = JSON.parse(data) as any;
       let modified = false;
 
-      const keysToVerify: (keyof DbSchema)[] = [
-        "settings",
-        "contactInfo",
-        "homepageContent",
-        "admissionsConfig",
-        "gallery",
-        "users",
-        "auditLogs",
-        "notificationLogs",
-        "announcements",
-        "popups",
-      ];
-
       for (const key of keysToVerify) {
         if (db[key] === undefined) {
           db[key] = defaultDb[key];
@@ -461,6 +516,55 @@ function ensureDbFile() {
 }
 
 async function getDb(): Promise<DbSchema> {
+  const dbPool = getPool();
+  if (dbPool) {
+    console.log("[DATABASE] Reading database from PostgreSQL...");
+    try {
+      await initDbSchema();
+      const { rows } = await dbPool.query("SELECT key, value FROM cms_store");
+      if (rows.length > 0) {
+        const db: any = {};
+        for (const row of rows) {
+          db[row.key] = row.value;
+        }
+
+        // Verify keys and fill defaults if missing
+        let modified = false;
+        for (const key of keysToVerify) {
+          if (db[key] === undefined) {
+            db[key] = defaultDb[key];
+            modified = true;
+          }
+        }
+        if (modified) {
+          await saveDb(db);
+        }
+        return db as DbSchema;
+      } else {
+        // Seed database
+        console.log("[DATABASE] No rows found in PostgreSQL. Seeding persistent database from seed source...");
+        let initialDb = defaultDb;
+        const seedPath = path.join(process.cwd(), "data", "db.json");
+        if (fs.existsSync(seedPath)) {
+          try {
+            const fileData = await fs.promises.readFile(seedPath, "utf-8");
+            initialDb = JSON.parse(fileData) as DbSchema;
+            console.log("[DATABASE] Successfully loaded seed file data/db.json");
+          } catch (e) {
+            console.error("Failed to read local seed data/db.json, using defaultDb:", e);
+          }
+        }
+        await saveDb(initialDb);
+        return initialDb;
+      }
+    } catch (error) {
+      console.error("Error reading from PostgreSQL database, falling back to file:", error);
+    }
+  } else {
+    console.log("[DATABASE] DATABASE_URL not set. Reading database from local JSON file...");
+  }
+
+  // Local file fallback
   ensureDbFile();
   try {
     const data = await fs.promises.readFile(DB_PATH, "utf-8");
@@ -472,8 +576,49 @@ async function getDb(): Promise<DbSchema> {
 }
 
 async function saveDb(db: DbSchema): Promise<void> {
+  const dbPool = getPool();
+  if (dbPool) {
+    console.log("[DATABASE] Writing database to PostgreSQL...");
+    try {
+      await initDbSchema();
+      const client = await dbPool.connect();
+      try {
+        await client.query("BEGIN");
+        for (const key of keysToVerify) {
+          const val = db[key];
+          if (val !== undefined) {
+            await client.query(
+              `INSERT INTO cms_store (key, value) VALUES ($1, $2)
+               ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = CURRENT_TIMESTAMP`,
+              [key, JSON.stringify(val)]
+            );
+          }
+        }
+        await client.query("COMMIT");
+        try {
+          revalidatePath("/", "layout");
+          console.log("[DATABASE] Revalidated layouts successfully");
+        } catch (e) {}
+        return;
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error("Error saving to PostgreSQL database, falling back to file:", error);
+    }
+  } else {
+    console.log("[DATABASE] DATABASE_URL not set. Writing database to local JSON file...");
+  }
+
+  // Local file fallback
   ensureDbFile();
   await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    revalidatePath("/", "layout");
+  } catch (e) {}
 }
 
 // RESTORE BACKUP DATABASE
