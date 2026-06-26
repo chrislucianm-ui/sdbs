@@ -49,49 +49,47 @@ export async function getAdminRole(): Promise<"owner" | "principal" | null> {
 
 // Login / Logout
 export async function loginAdmin(
-  password: string,
-  role: "owner" | "principal"
+  username: string,
+  password: string
 ): Promise<{ success: boolean; error?: string }> {
   const users = await db.getUsers();
-  // Find users that match this role
-  const user = users.find(u => u.role === role);
+  
+  // Find user by username (case-insensitive)
+  const user = users.find(u => u.username.toLowerCase() === username.trim().toLowerCase());
   if (!user) {
-    return { success: false, error: "No user configured for this role." };
+    return { success: false, error: "Invalid username or password." };
   }
 
   const hashed = hashPassword(password);
-  
-  // Find specific user match or use the hashed password
-  const matchedUser = users.find(u => u.role === role && u.passwordHash === hashed);
-  if (matchedUser) {
-    const cookieStore = await cookies();
-    cookieStore.set("admin_session", "true", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 2, // 2 hours
-      path: "/",
-    });
-    cookieStore.set("admin_user", matchedUser.username, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 2,
-      path: "/",
-    });
-    cookieStore.set("admin_role", matchedUser.role, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 2,
-      path: "/",
-    });
-
-    await db.addAuditLog(matchedUser.username, matchedUser.role, "LOGIN", "Logged into admin portal");
-    return { success: true };
+  if (user.passwordHash !== hashed) {
+    return { success: false, error: "Invalid username or password." };
   }
 
-  return { success: false, error: "Invalid passcode for the selected role." };
+  const cookieStore = await cookies();
+  cookieStore.set("admin_session", "true", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 60 * 60 * 2, // 2 hours
+    path: "/",
+  });
+  cookieStore.set("admin_user", user.username, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 60 * 60 * 2,
+    path: "/",
+  });
+  cookieStore.set("admin_role", user.role, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 60 * 60 * 2,
+    path: "/",
+  });
+
+  await db.addAuditLog(user.username, user.role, "LOGIN", "Logged into admin portal");
+  return { success: true };
 }
 
 export async function logoutAdmin(): Promise<void> {

@@ -1147,7 +1147,7 @@ export default function AdminDashboardClient({
                 {settings.schoolName}
               </span>
               <span className="text-[9px] uppercase text-white/40 tracking-wider font-semibold">
-                User: {userName} ({userRole === "owner" ? "Owner" : "Principal"})
+                User: {userName} ({userRole === "owner" ? "Super Admin" : "Admin"})
               </span>
             </div>
           </div>

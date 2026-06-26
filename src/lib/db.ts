@@ -364,7 +364,7 @@ const defaultDb: DbSchema = {
     },
     {
       username: "principal",
-      passwordHash: "3d6cb4604595e8654ff4512e0329971cb0a84f5cf91a329d5045a5509cf6e792", // sha256 of "principal"
+      passwordHash: "69e03750027e6b1e9f95bd21d227613c0024ec799ebfb7fe281371e1153f9bda", // sha256 of "principal"
       name: "School Principal",
       role: "principal",
     },

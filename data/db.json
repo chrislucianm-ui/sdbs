@@ -70,6 +70,20 @@
       "smsStatus": "success",
       "waStatus": "failure",
       "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
+    },
+    {
+      "name": "ghjgh",
+      "parentName": "jhghgjgj",
+      "email": "chrislucianm@gmail.com",
+      "phone": "8738867566",
+      "grade": "Class 6-8",
+      "message": "gfhghf",
+      "id": "inq_x9h5qsd",
+      "status": "Pending",
+      "createdAt": "2026-06-26T12:32:09.948Z",
+      "smsStatus": "success",
+      "waStatus": "failure",
+      "waError": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number."
     }
   ],
   "notices": [
@@ -155,6 +169,25 @@
     "youtubeUrl": ""
   },
   "notificationLogs": [
+    {
+      "type": "whatsapp",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_x9h5qsd",
+      "inquiryName": "ghjgh",
+      "status": "failure",
+      "errorMessage": "The 'To' number whatsapp:+91 8738882912 is not a valid phone number.",
+      "id": "log_jlt72r5",
+      "createdAt": "2026-06-26T12:32:10.993Z"
+    },
+    {
+      "type": "sms",
+      "recipient": "+91 8738882912",
+      "inquiryId": "inq_x9h5qsd",
+      "inquiryName": "ghjgh",
+      "status": "success",
+      "id": "log_qbm8imp",
+      "createdAt": "2026-06-26T12:32:10.668Z"
+    },
     {
       "type": "whatsapp",
       "recipient": "+91 8738882912",
@@ -546,6 +579,213 @@
     }
   ],
   "auditLogs": [
+    {
+      "id": "audit_f0p4ba3",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:57:37.384Z"
+    },
+    {
+      "id": "audit_hourc0z",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:57:16.935Z"
+    },
+    {
+      "id": "audit_ux69vid",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:57:13.462Z"
+    },
+    {
+      "id": "audit_izm0gza",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:56:10.029Z"
+    },
+    {
+      "id": "audit_sbia2az",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:52:53.998Z"
+    },
+    {
+      "id": "audit_cf5q3tv",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:32:12.838Z"
+    },
+    {
+      "id": "audit_1eh7cut",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:31:41.093Z"
+    },
+    {
+      "id": "audit_ht8i9oe",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:31:38.007Z"
+    },
+    {
+      "id": "audit_o1r1nno",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:31:32.221Z"
+    },
+    {
+      "id": "audit_2mcip7s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "PASSWORD_RESET",
+      "details": "Reset password for principal",
+      "timestamp": "2026-06-26T12:31:24.609Z"
+    },
+    {
+      "id": "audit_eosqx9w",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_DELETE",
+      "details": "Deleted user rakesh",
+      "timestamp": "2026-06-26T12:31:15.252Z"
+    },
+    {
+      "id": "audit_j4wu6z8",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_CREATE",
+      "details": "Created user rakesh (principal)",
+      "timestamp": "2026-06-26T12:31:02.656Z"
+    },
+    {
+      "id": "audit_71omqjq",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_DELETE",
+      "details": "Deleted user lala",
+      "timestamp": "2026-06-26T12:30:15.638Z"
+    },
+    {
+      "id": "audit_b3gfojd",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:29:50.791Z"
+    },
+    {
+      "id": "audit_w92dy07",
+      "username": "lala",
+      "name": "rakesh",
+      "role": "principal",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:29:49.117Z"
+    },
+    {
+      "id": "audit_a4240rp",
+      "username": "lala",
+      "name": "rakesh",
+      "role": "principal",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:29:25.336Z"
+    },
+    {
+      "id": "audit_9pbwvgq",
+      "username": "lala",
+      "name": "rakesh",
+      "role": "principal",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:29:13.547Z"
+    },
+    {
+      "id": "audit_cd9uqz8",
+      "username": "lala",
+      "name": "rakesh",
+      "role": "principal",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:29:08.457Z"
+    },
+    {
+      "id": "audit_6kf23bm",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:29:04.425Z"
+    },
+    {
+      "id": "audit_8ec3w4s",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "USER_CREATE",
+      "details": "Created user lala (principal)",
+      "timestamp": "2026-06-26T12:28:55.136Z"
+    },
+    {
+      "id": "audit_w561eig",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:27:56.263Z"
+    },
+    {
+      "id": "audit_3ps9d6c",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGOUT",
+      "details": "Logged out from admin portal",
+      "timestamp": "2026-06-26T12:19:32.009Z"
+    },
+    {
+      "id": "audit_boc6k5u",
+      "username": "admin",
+      "name": "Super Administrator",
+      "role": "owner",
+      "action": "LOGIN",
+      "details": "Logged into admin portal",
+      "timestamp": "2026-06-26T12:18:19.177Z"
+    },
     {
       "id": "audit_97ftam3",
       "username": "admin",
