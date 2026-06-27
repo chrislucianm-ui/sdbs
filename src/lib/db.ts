@@ -163,41 +163,19 @@ const DB_PATH = IS_VERCEL
 let poolInstance: Pool | null = null;
 
 export function getPool(): Pool | null {
-  // Prevent database pool initialization during Next.js build phase to avoid build-time failures
+  // Disable connection pooling during build time to prevent compilation errors
   if (process.env.NEXT_PHASE === "phase-production-build") {
-    console.log("[DATABASE] Next.js build phase detected. Skipping PostgreSQL pool initialization.");
     return null;
   }
 
-  let url = process.env.DATABASE_URL;
+  const url = process.env.DATABASE_URL;
   if (!url) return null;
 
-  // Log debug metadata about the database URL as requested
-  console.log(`[DATABASE] typeof process.env.DATABASE_URL: ${typeof url}`);
-  console.log(`[DATABASE] process.env.DATABASE_URL startsWith postgresql://: ${url.startsWith("postgresql://")}`);
-  console.log(`[DATABASE] process.env.DATABASE_URL startsWith postgres://: ${url.startsWith("postgres://")}`);
-  console.log(`[DATABASE] process.env.DATABASE_URL length: ${url.length}`);
-
-  // Sanitize the URL by trimming whitespace and removing surrounding quotes
-  url = url.trim();
-  if ((url.startsWith('"') && url.endsWith('"')) || (url.startsWith("'") && url.endsWith("'"))) {
-    url = url.slice(1, -1).trim();
-    console.log("[DATABASE] Sanitized surrounding quotes and whitespace from connection URL.");
-  }
-
   if (!poolInstance) {
-    try {
-      poolInstance = new Pool({
-        connectionString: url,
-        ssl: { rejectUnauthorized: false },
-      });
-      console.log("[DATABASE] PostgreSQL Connection Pool initialized successfully.");
-    } catch (err: any) {
-      // Securely mask password in logs
-      const maskedUrl = url.replace(/:([^:]+)@/, ":***@");
-      console.error(`[DATABASE] CRITICAL: Failed to initialize Pool with connectionString "${maskedUrl}":`, err);
-      throw err;
-    }
+    poolInstance = new Pool({
+      connectionString: url,
+      ssl: { rejectUnauthorized: false },
+    });
   }
   return poolInstance;
 }
@@ -471,12 +449,12 @@ const keysToVerify: (keyof DbSchema)[] = [
 
 let schemaInitialized = false;
 
-export async function initDbSchema() {
+export async function initDbSchema(): Promise<void> {
   if (schemaInitialized) return;
-  const dbPool = getPool();
-  if (!dbPool) return;
+  const pool = getPool();
+  if (!pool) return;
 
-  const client = await dbPool.connect();
+  const client = await pool.connect();
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS cms_store (
@@ -494,9 +472,8 @@ export async function initDbSchema() {
       );
     `);
     schemaInitialized = true;
-    console.log("[DATABASE] Database schema tables verified/created successfully.");
   } catch (error) {
-    console.error("[DATABASE] Error initializing database tables:", error);
+    console.error("[db] Error initializing database schema:", error);
     throw error;
   } finally {
     client.release();
@@ -513,7 +490,6 @@ function ensureDbFile() {
     if (IS_VERCEL && fs.existsSync(seedPath)) {
       try {
         fs.copyFileSync(seedPath, DB_PATH);
-        console.log("[DATABASE] Initialized /tmp/db.json from seed db.json");
         return;
       } catch (e) {
         console.error("Failed to copy seed database to /tmp/db.json:", e);
@@ -543,14 +519,11 @@ function ensureDbFile() {
 }
 
 async function getDb(): Promise<DbSchema> {
-  const dbPool = getPool();
-  if (dbPool) {
-    console.log("[DATABASE] DATABASE_URL detected. Reading database from PostgreSQL...");
+  const pool = getPool();
+  if (pool) {
     try {
       await initDbSchema();
-      console.log("[DATABASE] Executing query: SELECT key, value FROM cms_store");
-      const { rows } = await dbPool.query("SELECT key, value FROM cms_store");
-      console.log(`[DATABASE] Query successful. Retrieved ${rows.length} rows.`);
+      const { rows } = await pool.query("SELECT key, value FROM cms_store");
       if (rows.length > 0) {
         const db: any = {};
         for (const row of rows) {
@@ -570,29 +543,24 @@ async function getDb(): Promise<DbSchema> {
         }
         return db as DbSchema;
       } else {
-        // Seed database
-        console.log("[DATABASE] PostgreSQL database is empty. Seeding persistent database from seed source...");
-        let initialDb = defaultDb;
+        // Seed empty database
+        let seedDb = defaultDb;
         const seedPath = path.join(process.cwd(), "data", "db.json");
         if (fs.existsSync(seedPath)) {
           try {
             const fileData = await fs.promises.readFile(seedPath, "utf-8");
-            initialDb = JSON.parse(fileData) as DbSchema;
-            console.log("[DATABASE] Successfully loaded seed file data/db.json");
+            seedDb = JSON.parse(fileData) as DbSchema;
           } catch (e) {
-            console.error("Failed to read local seed data/db.json, using defaultDb:", e);
+            console.error("Failed to read local seed data/db.json:", e);
           }
         }
-        await saveDb(initialDb);
-        return initialDb;
+        await saveDb(seedDb);
+        return seedDb;
       }
-    } catch (error: any) {
-      console.error("[DATABASE] CRITICAL: Failed to read from PostgreSQL database:", error);
-      // In production, we MUST throw the error and NOT fall back to local file
-      throw new Error(`Production database read failed: ${error.message}`);
+    } catch (error) {
+      console.error("[db] Production database read failed:", error);
+      throw error;
     }
-  } else {
-    console.log("[DATABASE] DATABASE_URL not set. Reading database from local JSON file fallback...");
   }
 
   // Local file fallback
@@ -607,12 +575,11 @@ async function getDb(): Promise<DbSchema> {
 }
 
 async function saveDb(db: DbSchema): Promise<void> {
-  const dbPool = getPool();
-  if (dbPool) {
-    console.log("[DATABASE] DATABASE_URL detected. Writing database to PostgreSQL...");
+  const pool = getPool();
+  if (pool) {
     try {
       await initDbSchema();
-      const client = await dbPool.connect();
+      const client = await pool.connect();
       try {
         await client.query("BEGIN");
         for (const key of keysToVerify) {
@@ -626,10 +593,8 @@ async function saveDb(db: DbSchema): Promise<void> {
           }
         }
         await client.query("COMMIT");
-        console.log("[DATABASE] Successfully committed database write to PostgreSQL.");
         try {
           revalidatePath("/", "layout");
-          console.log("[DATABASE] Revalidated layouts successfully");
         } catch (e) {}
         return;
       } catch (error) {
@@ -638,12 +603,10 @@ async function saveDb(db: DbSchema): Promise<void> {
       } finally {
         client.release();
       }
-    } catch (error: any) {
-      console.error("[DATABASE] CRITICAL: Failed to write to PostgreSQL database:", error);
-      throw new Error(`Production database write failed: ${error.message}`);
+    } catch (error) {
+      console.error("[db] Production database write failed:", error);
+      throw error;
     }
-  } else {
-    console.log("[DATABASE] DATABASE_URL not set. Writing database to local JSON file fallback...");
   }
 
   // Local file fallback
