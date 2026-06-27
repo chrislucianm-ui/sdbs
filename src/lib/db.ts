@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { sendTwilioSMS, sendTwilioWhatsApp } from "./notifications";
+import { sendTwilioSMS, sendTwilioWhatsApp, sendInquiryWhatsAppNotification } from "./notifications";
 import { Pool } from "pg";
 import { revalidatePath } from "next/cache";
 
@@ -786,6 +786,18 @@ export async function addInquiry(
 
   db.inquiries.push(newInquiry);
   await saveDb(db);
+
+  // Trigger Twilio SDK WhatsApp notification to school administration
+  try {
+    const schoolWaRes = await sendInquiryWhatsAppNotification(newInquiry);
+    if (schoolWaRes.success) {
+      console.log(`[SCHOOL WHATSAPP] SUCCESS: WhatsApp delivered to school (SID: ${schoolWaRes.sid})`);
+    } else {
+      console.error(`[SCHOOL WHATSAPP] FAILURE: WhatsApp delivery failed. Error: ${schoolWaRes.error}`);
+    }
+  } catch (e: any) {
+    console.error(`[SCHOOL WHATSAPP] Error sending WhatsApp notification:`, e);
+  }
 
   // Trigger Real Notifications
   const settings = await getSettings();

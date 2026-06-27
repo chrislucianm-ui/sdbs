@@ -90,3 +90,48 @@ export async function sendTwilioWhatsApp(to: string, body: string): Promise<Twil
     return { success: false, error: err.message || "Network request failed" };
   }
 }
+
+import twilio from "twilio";
+
+export async function sendInquiryWhatsAppNotification(inquiry: {
+  name: string;
+  parentName?: string;
+  phone: string;
+  grade: string;
+  createdAt: string;
+}): Promise<TwilioResult> {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const from = process.env.TWILIO_WHATSAPP_NUMBER;
+  const to = process.env.SCHOOL_WHATSAPP_NUMBER;
+
+  if (!accountSid || !authToken || !from || !to) {
+    return {
+      success: false,
+      error: "Missing Twilio credentials or WhatsApp configuration in environment variables.",
+    };
+  }
+
+  try {
+    const client = twilio(accountSid, authToken);
+    const formattedTo = to.startsWith("whatsapp:") ? to : `whatsapp:${to}`;
+    const formattedFrom = from.startsWith("whatsapp:") ? from : `whatsapp:${from}`;
+
+    const body = `New inquiry submitted:\n` +
+      `- Student Name: ${inquiry.name}\n` +
+      `- Parent Name: ${inquiry.parentName || "N/A"}\n` +
+      `- Phone Number: ${inquiry.phone}\n` +
+      `- Class: ${inquiry.grade}\n` +
+      `- Timestamp: ${inquiry.createdAt}`;
+
+    const message = await client.messages.create({
+      body: body,
+      from: formattedFrom,
+      to: formattedTo,
+    });
+
+    return { success: true, sid: message.sid };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Twilio SDK request failed" };
+  }
+}
