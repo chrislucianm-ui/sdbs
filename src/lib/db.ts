@@ -171,6 +171,13 @@ export function getPool(): Pool | null {
 
   const url = process.env.DATABASE_URL;
   if (!url) return null;
+
+  // Log debug metadata about the database URL as requested
+  console.log(`[DATABASE] typeof process.env.DATABASE_URL: ${typeof url}`);
+  console.log(`[DATABASE] process.env.DATABASE_URL startsWith postgresql://: ${url.startsWith("postgresql://")}`);
+  console.log(`[DATABASE] process.env.DATABASE_URL startsWith postgres://: ${url.startsWith("postgres://")}`);
+  console.log(`[DATABASE] process.env.DATABASE_URL length: ${url.length}`);
+
   if (!poolInstance) {
     poolInstance = new Pool({
       connectionString: url,
