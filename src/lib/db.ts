@@ -169,7 +169,7 @@ export function getPool(): Pool | null {
     return null;
   }
 
-  const url = process.env.DATABASE_URL;
+  let url = process.env.DATABASE_URL;
   if (!url) return null;
 
   // Log debug metadata about the database URL as requested
@@ -178,12 +178,26 @@ export function getPool(): Pool | null {
   console.log(`[DATABASE] process.env.DATABASE_URL startsWith postgres://: ${url.startsWith("postgres://")}`);
   console.log(`[DATABASE] process.env.DATABASE_URL length: ${url.length}`);
 
+  // Sanitize the URL by trimming whitespace and removing surrounding quotes
+  url = url.trim();
+  if ((url.startsWith('"') && url.endsWith('"')) || (url.startsWith("'") && url.endsWith("'"))) {
+    url = url.slice(1, -1).trim();
+    console.log("[DATABASE] Sanitized surrounding quotes and whitespace from connection URL.");
+  }
+
   if (!poolInstance) {
-    poolInstance = new Pool({
-      connectionString: url,
-      ssl: { rejectUnauthorized: false },
-    });
-    console.log("[DATABASE] PostgreSQL Connection Pool initialized successfully.");
+    try {
+      poolInstance = new Pool({
+        connectionString: url,
+        ssl: { rejectUnauthorized: false },
+      });
+      console.log("[DATABASE] PostgreSQL Connection Pool initialized successfully.");
+    } catch (err: any) {
+      // Securely mask password in logs
+      const maskedUrl = url.replace(/:([^:]+)@/, ":***@");
+      console.error(`[DATABASE] CRITICAL: Failed to initialize Pool with connectionString "${maskedUrl}":`, err);
+      throw err;
+    }
   }
   return poolInstance;
 }
