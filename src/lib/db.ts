@@ -479,6 +479,255 @@ export async function initDbSchema(): Promise<void> {
     client.release();
   }
 }
+interface CacheEntry {
+  value: any;
+  timestamp: number;
+}
+
+let configCache: Record<string, CacheEntry> = {};
+const CACHE_TTL_MS = 10000; // 10 seconds cache duration for high performance under load
+
+async function getCMSValue<T>(key: string, defaultValue: T): Promise<T> {
+  const now = Date.now();
+  if (configCache[key] && (now - configCache[key].timestamp < CACHE_TTL_MS)) {
+    return configCache[key].value as T;
+  }
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      const { rows } = await pool.query("SELECT value FROM cms_store WHERE key = $1", [key]);
+      if (rows.length > 0) {
+        const val = rows[0].value as T;
+        configCache[key] = { value: val, timestamp: now };
+        return val;
+      } else {
+        await pool.query(
+          "INSERT INTO cms_store (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING",
+          [key, JSON.stringify(defaultValue)]
+        );
+        configCache[key] = { value: defaultValue, timestamp: now };
+        return defaultValue;
+      }
+    } catch (err) {
+      console.error(`[db] Error reading key ${key} from PostgreSQL:`, err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  try {
+    const data = await fs.promises.readFile(DB_PATH, "utf-8");
+    const db = JSON.parse(data);
+    const val = db[key] !== undefined ? db[key] : defaultValue;
+    configCache[key] = { value: val, timestamp: now };
+    return val as T;
+  } catch (err) {
+    return defaultValue;
+  }
+}
+
+async function setCMSValue<T>(key: string, value: T): Promise<void> {
+  configCache[key] = { value, timestamp: Date.now() };
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      await pool.query(
+        `INSERT INTO cms_store (key, value) VALUES ($1, $2)
+         ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = CURRENT_TIMESTAMP`,
+        [key, JSON.stringify(value)]
+      );
+      try {
+        revalidatePath("/", "layout");
+      } catch (e) {}
+      return;
+    } catch (err) {
+      console.error(`[db] Error writing key ${key} to PostgreSQL:`, err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  db[key] = value;
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    revalidatePath("/", "layout");
+  } catch (e) {}
+}
+
+async function appendToCMSArray<T>(key: string, item: T, prepend = false): Promise<void> {
+  if (configCache[key]) {
+    const cachedArr = configCache[key].value as T[];
+    configCache[key].value = prepend ? [item, ...cachedArr] : [...cachedArr, item];
+    configCache[key].timestamp = Date.now();
+  }
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      if (prepend) {
+        await pool.query(
+          `UPDATE cms_store
+           SET value = jsonb_insert(value, '{0}', $1::jsonb), updated_at = CURRENT_TIMESTAMP
+           WHERE key = $2`,
+          [JSON.stringify(item), key]
+        );
+      } else {
+        await pool.query(
+          `UPDATE cms_store
+           SET value = value || $1::jsonb, updated_at = CURRENT_TIMESTAMP
+           WHERE key = $2`,
+          [JSON.stringify(item), key]
+        );
+      }
+      try {
+        revalidatePath("/", "layout");
+      } catch (e) {}
+      return;
+    } catch (err) {
+      console.error(`[db] Error appending to array ${key} in PostgreSQL:`, err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  if (!db[key]) db[key] = [];
+  if (prepend) {
+    db[key].unshift(item);
+  } else {
+    db[key].push(item);
+  }
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    revalidatePath("/", "layout");
+  } catch (e) {}
+}
+
+async function updateInCMSArray<T extends { id: string }>(
+  key: string,
+  id: string,
+  patch: Partial<T>
+): Promise<T | null> {
+  let updatedItem: T | null = null;
+  if (configCache[key]) {
+    const cachedArr = configCache[key].value as T[];
+    const idx = cachedArr.findIndex(item => item.id === id);
+    if (idx !== -1) {
+      cachedArr[idx] = { ...cachedArr[idx], ...patch };
+      updatedItem = cachedArr[idx];
+      configCache[key].timestamp = Date.now();
+    }
+  }
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      const { rows } = await pool.query(
+        `UPDATE cms_store
+         SET value = COALESCE(
+           (
+             SELECT jsonb_agg(
+               CASE
+                 WHEN elem->>'id' = $1 THEN elem || $2::jsonb
+                 ELSE elem
+               END
+             )
+             FROM jsonb_array_elements(value) elem
+           ),
+           '[]'::jsonb
+         ), updated_at = CURRENT_TIMESTAMP
+         WHERE key = $3
+         RETURNING value`,
+        [id, JSON.stringify(patch), key]
+      );
+      
+      if (rows.length > 0) {
+        const arr = rows[0].value as T[];
+        const dbItem = arr.find(item => item.id === id) || null;
+        if (dbItem) {
+          configCache[key] = { value: arr, timestamp: Date.now() };
+        }
+        try {
+          revalidatePath("/", "layout");
+        } catch (e) {}
+        return dbItem;
+      }
+      return updatedItem;
+    } catch (err) {
+      console.error(`[db] Error updating item in array ${key}:`, err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  if (!db[key]) db[key] = [];
+  const idx = db[key].findIndex((item: any) => item.id === id);
+  if (idx === -1) return null;
+  db[key][idx] = { ...db[key][idx], ...patch };
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    revalidatePath("/", "layout");
+  } catch (e) {}
+  return db[key][idx];
+}
+
+async function deleteFromCMSArray(key: string, id: string): Promise<boolean> {
+  if (configCache[key]) {
+    const cachedArr = configCache[key].value as any[];
+    configCache[key].value = cachedArr.filter(item => item.id !== id);
+    configCache[key].timestamp = Date.now();
+  }
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      await pool.query(
+        `UPDATE cms_store
+         SET value = COALESCE(
+           (
+             SELECT jsonb_agg(elem)
+             FROM jsonb_array_elements(value) elem
+             WHERE elem->>'id' <> $1
+           ),
+           '[]'::jsonb
+         ), updated_at = CURRENT_TIMESTAMP
+         WHERE key = $2`,
+        [id, key]
+      );
+      try {
+        revalidatePath("/", "layout");
+      } catch (e) {}
+      return true;
+    } catch (err) {
+      console.error(`[db] Error deleting item from array ${key}:`, err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  if (!db[key]) return false;
+  const initialLength = db[key].length;
+  db[key] = db[key].filter((item: any) => item.id !== id);
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
+  try {
+    revalidatePath("/", "layout");
+  } catch (e) {}
+  return db[key].length < initialLength;
+}
 
 function ensureDbFile() {
   const dir = path.dirname(DB_PATH);
@@ -496,25 +745,6 @@ function ensureDbFile() {
       }
     }
     fs.writeFileSync(DB_PATH, JSON.stringify(defaultDb, null, 2), "utf-8");
-  } else {
-    try {
-      const data = fs.readFileSync(DB_PATH, "utf-8");
-      const db = JSON.parse(data) as any;
-      let modified = false;
-
-      for (const key of keysToVerify) {
-        if (db[key] === undefined) {
-          db[key] = defaultDb[key];
-          modified = true;
-        }
-      }
-
-      if (modified) {
-        fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
-      }
-    } catch (e) {
-      console.error("Error patching db file structures:", e);
-    }
   }
 }
 
@@ -524,46 +754,28 @@ async function getDb(): Promise<DbSchema> {
     try {
       await initDbSchema();
       const { rows } = await pool.query("SELECT key, value FROM cms_store");
-      if (rows.length > 0) {
-        const db: any = {};
-        for (const row of rows) {
-          db[row.key] = row.value;
-        }
-
-        // Verify keys and fill defaults if missing
-        let modified = false;
-        for (const key of keysToVerify) {
-          if (db[key] === undefined) {
-            db[key] = defaultDb[key];
-            modified = true;
-          }
-        }
-        if (modified) {
-          await saveDb(db);
-        }
-        return db as DbSchema;
-      } else {
-        // Seed empty database
-        let seedDb = defaultDb;
-        const seedPath = path.join(process.cwd(), "data", "db.json");
-        if (fs.existsSync(seedPath)) {
-          try {
-            const fileData = await fs.promises.readFile(seedPath, "utf-8");
-            seedDb = JSON.parse(fileData) as DbSchema;
-          } catch (e) {
-            console.error("Failed to read local seed data/db.json:", e);
-          }
-        }
-        await saveDb(seedDb);
-        return seedDb;
+      const db: any = {};
+      for (const row of rows) {
+        db[row.key] = row.value;
       }
+
+      let modified = false;
+      for (const key of keysToVerify) {
+        if (db[key] === undefined) {
+          db[key] = defaultDb[key];
+          modified = true;
+        }
+      }
+      if (modified) {
+        await saveDb(db);
+      }
+      return db as DbSchema;
     } catch (error) {
       console.error("[db] Production database read failed:", error);
       throw error;
     }
   }
 
-  // Local file fallback
   ensureDbFile();
   try {
     const data = await fs.promises.readFile(DB_PATH, "utf-8");
@@ -575,6 +787,8 @@ async function getDb(): Promise<DbSchema> {
 }
 
 async function saveDb(db: DbSchema): Promise<void> {
+  configCache = {};
+
   const pool = getPool();
   if (pool) {
     try {
@@ -609,7 +823,6 @@ async function saveDb(db: DbSchema): Promise<void> {
     }
   }
 
-  // Local file fallback
   ensureDbFile();
   await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
   try {
@@ -617,7 +830,6 @@ async function saveDb(db: DbSchema): Promise<void> {
   } catch (e) {}
 }
 
-// RESTORE BACKUP DATABASE
 export async function restoreDatabaseBackup(jsonString: string): Promise<boolean> {
   try {
     const db = JSON.parse(jsonString) as DbSchema;
@@ -634,72 +846,56 @@ export async function restoreDatabaseBackup(jsonString: string): Promise<boolean
 
 // SYSTEM SETTINGS HELPERS
 export async function getSettings(): Promise<SystemSettings> {
-  const db = await getDb();
-  return db.settings || defaultDb.settings!;
+  return await getCMSValue<SystemSettings>("settings", defaultDb.settings!);
 }
 
 export async function updateSettings(settingsData: SystemSettings): Promise<SystemSettings> {
-  const db = await getDb();
-  db.settings = settingsData;
-  await saveDb(db);
-  return db.settings;
+  await setCMSValue<SystemSettings>("settings", settingsData);
+  return settingsData;
 }
 
 // SYSTEM CONTACT HELPERS
 export async function getContactInfo(): Promise<SystemContactInfo> {
-  const db = await getDb();
-  return db.contactInfo || defaultDb.contactInfo!;
+  return await getCMSValue<SystemContactInfo>("contactInfo", defaultDb.contactInfo!);
 }
 
 export async function updateContactInfo(info: SystemContactInfo): Promise<SystemContactInfo> {
-  const db = await getDb();
-  db.contactInfo = info;
-  await saveDb(db);
-  return db.contactInfo;
+  await setCMSValue<SystemContactInfo>("contactInfo", info);
+  return info;
 }
 
 // HOMEPAGE CONTENT HELPERS
 export async function getHomepageContent(): Promise<HomepageContent> {
-  const db = await getDb();
-  return db.homepageContent || defaultDb.homepageContent!;
+  return await getCMSValue<HomepageContent>("homepageContent", defaultDb.homepageContent!);
 }
 
 export async function updateHomepageContent(content: HomepageContent): Promise<HomepageContent> {
-  const db = await getDb();
-  db.homepageContent = content;
-  await saveDb(db);
-  return db.homepageContent;
+  await setCMSValue<HomepageContent>("homepageContent", content);
+  return content;
 }
 
 // ADMISSIONS CONFIG HELPERS
 export async function getAdmissionsConfig(): Promise<AdmissionsConfig> {
-  const db = await getDb();
-  return db.admissionsConfig || defaultDb.admissionsConfig!;
+  return await getCMSValue<AdmissionsConfig>("admissionsConfig", defaultDb.admissionsConfig!);
 }
 
 export async function updateAdmissionsConfig(config: AdmissionsConfig): Promise<AdmissionsConfig> {
-  const db = await getDb();
-  db.admissionsConfig = config;
-  await saveDb(db);
-  return db.admissionsConfig;
+  await setCMSValue<AdmissionsConfig>("admissionsConfig", config);
+  return config;
 }
 
 // USERS MANAGEMENT HELPERS
 export async function getUsers(): Promise<User[]> {
-  const db = await getDb();
-  return db.users || defaultDb.users!;
+  return await getCMSValue<User[]>("users", defaultDb.users!);
 }
 
 export async function saveUsers(usersList: User[]): Promise<void> {
-  const db = await getDb();
-  db.users = usersList;
-  await saveDb(db);
+  await setCMSValue<User[]>("users", usersList);
 }
 
 // AUDIT LOG HELPERS
 export async function getAuditLogs(): Promise<AuditLog[]> {
-  const db = await getDb();
-  return db.auditLogs || [];
+  return await getCMSValue<AuditLog[]>("auditLogs", []);
 }
 
 export async function addAuditLog(
@@ -708,16 +904,10 @@ export async function addAuditLog(
   action: string,
   details: string
 ): Promise<AuditLog> {
-  const db = await getDb();
-  if (!db.auditLogs) {
-    db.auditLogs = [];
-  }
-
+  const users = await getUsers();
   let actorName = username;
-  if (db.users) {
-    const u = db.users.find((user) => user.username === username);
-    if (u) actorName = u.name;
-  }
+  const u = users.find((user) => user.username === username);
+  if (u) actorName = u.name;
 
   const newLog: AuditLog = {
     id: "audit_" + Math.random().toString(36).substring(2, 9),
@@ -729,44 +919,102 @@ export async function addAuditLog(
     timestamp: new Date().toISOString(),
   };
 
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      await pool.query(
+        `UPDATE cms_store
+         SET value = (
+           SELECT COALESCE(jsonb_agg(elem), '[]'::jsonb)
+           FROM (
+             SELECT elem FROM jsonb_array_elements(jsonb_insert(value, '{0}', $1::jsonb)) elem LIMIT 500
+           ) t
+         ), updated_at = CURRENT_TIMESTAMP
+         WHERE key = 'auditLogs'`,
+        [JSON.stringify(newLog)]
+      );
+      if (configCache["auditLogs"]) {
+        const cached = configCache["auditLogs"].value as AuditLog[];
+        configCache["auditLogs"].value = [newLog, ...cached].slice(0, 500);
+        configCache["auditLogs"].timestamp = Date.now();
+      }
+      return newLog;
+    } catch (err) {
+      console.error("[db] Failed to add audit log:", err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  if (!db.auditLogs) db.auditLogs = [];
   db.auditLogs.unshift(newLog);
   if (db.auditLogs.length > 500) {
     db.auditLogs = db.auditLogs.slice(0, 500);
   }
-  await saveDb(db);
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
   return newLog;
 }
 
 // Notification Logs Helpers
 export async function getNotificationLogs(): Promise<NotificationLog[]> {
-  const db = await getDb();
-  return db.notificationLogs || [];
+  return await getCMSValue<NotificationLog[]>("notificationLogs", []);
 }
 
 export async function addNotificationLog(
   logData: Omit<NotificationLog, "id" | "createdAt">
 ): Promise<NotificationLog> {
-  const db = await getDb();
-  if (!db.notificationLogs) {
-    db.notificationLogs = [];
-  }
   const newLog: NotificationLog = {
     ...logData,
     id: "log_" + Math.random().toString(36).substring(2, 9),
     createdAt: new Date().toISOString(),
   };
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      await pool.query(
+        `UPDATE cms_store
+         SET value = (
+           SELECT COALESCE(jsonb_agg(elem), '[]'::jsonb)
+           FROM (
+             SELECT elem FROM jsonb_array_elements(jsonb_insert(value, '{0}', $1::jsonb)) elem LIMIT 100
+           ) t
+         ), updated_at = CURRENT_TIMESTAMP
+         WHERE key = 'notificationLogs'`,
+        [JSON.stringify(newLog)]
+      );
+      if (configCache["notificationLogs"]) {
+        const cached = configCache["notificationLogs"].value as NotificationLog[];
+        configCache["notificationLogs"].value = [newLog, ...cached].slice(0, 100);
+        configCache["notificationLogs"].timestamp = Date.now();
+      }
+      return newLog;
+    } catch (err) {
+      console.error("[db] Failed to add notification log:", err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const data = await fs.promises.readFile(DB_PATH, "utf-8");
+  const db = JSON.parse(data);
+  if (!db.notificationLogs) db.notificationLogs = [];
   db.notificationLogs.unshift(newLog);
   if (db.notificationLogs.length > 100) {
     db.notificationLogs = db.notificationLogs.slice(0, 100);
   }
-  await saveDb(db);
+  await fs.promises.writeFile(DB_PATH, JSON.stringify(db, null, 2), "utf-8");
   return newLog;
 }
 
 // Inquiry Helpers
 export async function getInquiries(): Promise<Inquiry[]> {
-  const db = await getDb();
-  return db.inquiries.sort(
+  const inquiries = await getCMSValue<Inquiry[]>("inquiries", []);
+  return inquiries.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 }
@@ -774,7 +1022,6 @@ export async function getInquiries(): Promise<Inquiry[]> {
 export async function addInquiry(
   inquiryData: Omit<Inquiry, "id" | "status" | "createdAt">
 ): Promise<Inquiry> {
-  const db = await getDb();
   const newInquiry: Inquiry = {
     ...inquiryData,
     id: "inq_" + Math.random().toString(36).substring(2, 9),
@@ -784,103 +1031,109 @@ export async function addInquiry(
     waStatus: "pending",
   };
 
-  db.inquiries.push(newInquiry);
-  await saveDb(db);
+  await appendToCMSArray<Inquiry>("inquiries", newInquiry, true);
 
-  // Trigger Twilio SDK WhatsApp notification to school administration
-  try {
-    const schoolWaRes = await sendInquiryWhatsAppNotification(newInquiry);
-    if (schoolWaRes.success) {
-      console.log(`[SCHOOL WHATSAPP] SUCCESS: WhatsApp delivered to school (SID: ${schoolWaRes.sid})`);
-    } else {
-      console.error(`[SCHOOL WHATSAPP] FAILURE: WhatsApp delivery failed. Error: ${schoolWaRes.error}`);
+  (async () => {
+    const settings = await getSettings();
+    const admissionsPhone = settings.smsNotificationPhone?.trim();
+    const messageBody = `${settings.schoolName} / ${settings.schoolSubName}: New admission inquiry received for ${newInquiry.grade}. Student: ${newInquiry.name}, Parent: ${newInquiry.parentName || "N/A"}, Phone: ${newInquiry.phone}.`;
+
+    try {
+      const schoolWaRes = await sendInquiryWhatsAppNotification(newInquiry);
+      if (schoolWaRes.success) {
+        console.log(`[SCHOOL WHATSAPP] SUCCESS: WhatsApp delivered to school (SID: ${schoolWaRes.sid})`);
+      } else {
+        console.error(`[SCHOOL WHATSAPP] FAILURE: WhatsApp delivery failed. Error: ${schoolWaRes.error}`);
+      }
+    } catch (e: any) {
+      console.error(`[SCHOOL WHATSAPP] Error sending WhatsApp notification:`, e);
     }
-  } catch (e: any) {
-    console.error(`[SCHOOL WHATSAPP] Error sending WhatsApp notification:`, e);
-  }
 
-  // Trigger Real Notifications
-  const settings = await getSettings();
-  const admissionsPhone = settings.smsNotificationPhone?.trim();
-  const messageBody = `${settings.schoolName} / ${settings.schoolSubName}: New admission inquiry received for ${newInquiry.grade}. Student: ${newInquiry.name}, Parent: ${newInquiry.parentName || "N/A"}, Phone: ${newInquiry.phone}.`;
+    if (admissionsPhone) {
+      console.log(`[NOTIFICATIONS] Sending notifications for inquiry ${newInquiry.id} to ${admissionsPhone}...`);
+      
+      let smsSuccess = false;
+      let smsErr: string | undefined;
+      let waSuccess = false;
+      let waErr: string | undefined;
 
-  if (admissionsPhone) {
-    console.log(`[NOTIFICATIONS] Sending notifications for inquiry ${newInquiry.id} to ${admissionsPhone}...`);
-    
-    // 1. Send SMS
-    const smsRes = await sendTwilioSMS(admissionsPhone, messageBody);
-    if (smsRes.success) {
-      newInquiry.smsStatus = "success";
-      console.log(`[SMS NOTIFICATION] SUCCESS: SMS delivered to ${admissionsPhone} (SID: ${smsRes.sid})`);
-      await addNotificationLog({
-        type: "sms",
-        recipient: admissionsPhone,
-        inquiryId: newInquiry.id,
-        inquiryName: newInquiry.name,
-        status: "success"
+      try {
+        const smsRes = await sendTwilioSMS(admissionsPhone, messageBody);
+        if (smsRes.success) {
+          smsSuccess = true;
+          await addNotificationLog({
+            type: "sms",
+            recipient: admissionsPhone,
+            inquiryId: newInquiry.id,
+            inquiryName: newInquiry.name,
+            status: "success"
+          });
+        } else {
+          smsErr = smsRes.error;
+          await addNotificationLog({
+            type: "sms",
+            recipient: admissionsPhone,
+            inquiryId: newInquiry.id,
+            inquiryName: newInquiry.name,
+            status: "failure",
+            errorMessage: smsRes.error
+          });
+        }
+      } catch (err: any) {
+        smsErr = err.message || "SMS failed";
+      }
+
+      try {
+        const waRes = await sendTwilioWhatsApp(admissionsPhone, messageBody);
+        if (waRes.success) {
+          waSuccess = true;
+          await addNotificationLog({
+            type: "whatsapp",
+            recipient: admissionsPhone,
+            inquiryId: newInquiry.id,
+            inquiryName: newInquiry.name,
+            status: "success"
+          });
+        } else {
+          waErr = waRes.error;
+          await addNotificationLog({
+            type: "whatsapp",
+            recipient: admissionsPhone,
+            inquiryId: newInquiry.id,
+            inquiryName: newInquiry.name,
+            status: "failure",
+            errorMessage: waRes.error
+          });
+        }
+      } catch (err: any) {
+        waErr = err.message || "WhatsApp failed";
+      }
+
+      await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
+        smsStatus: smsSuccess ? "success" : "failure",
+        smsError: smsErr,
+        waStatus: waSuccess ? "success" : "failure",
+        waError: waErr
       });
     } else {
-      newInquiry.smsStatus = "failure";
-      newInquiry.smsError = smsRes.error;
-      console.error(`[SMS NOTIFICATION] FAILURE: SMS delivery failed. Error: ${smsRes.error}`);
+      await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
+        smsStatus: "failure",
+        smsError: "No admissions phone number configured in Settings.",
+        waStatus: "failure",
+        waError: "No admissions phone number configured in Settings."
+      });
       await addNotificationLog({
-        type: "sms",
-        recipient: admissionsPhone,
+        type: "both",
+        recipient: "N/A",
         inquiryId: newInquiry.id,
         inquiryName: newInquiry.name,
         status: "failure",
-        errorMessage: smsRes.error
+        errorMessage: "No admissions phone number configured in Settings."
       });
     }
-
-    // 2. Send WhatsApp
-    const waRes = await sendTwilioWhatsApp(admissionsPhone, messageBody);
-    if (waRes.success) {
-      newInquiry.waStatus = "success";
-      console.log(`[WHATSAPP NOTIFICATION] SUCCESS: WhatsApp delivered to ${admissionsPhone} (SID: ${waRes.sid})`);
-      await addNotificationLog({
-        type: "whatsapp",
-        recipient: admissionsPhone,
-        inquiryId: newInquiry.id,
-        inquiryName: newInquiry.name,
-        status: "success"
-      });
-    } else {
-      newInquiry.waStatus = "failure";
-      newInquiry.waError = waRes.error;
-      console.error(`[WHATSAPP NOTIFICATION] FAILURE: WhatsApp delivery failed. Error: ${waRes.error}`);
-      await addNotificationLog({
-        type: "whatsapp",
-        recipient: admissionsPhone,
-        inquiryId: newInquiry.id,
-        inquiryName: newInquiry.name,
-        status: "failure",
-        errorMessage: waRes.error
-      });
-    }
-  } else {
-    newInquiry.smsStatus = "failure";
-    newInquiry.smsError = "No admissions phone number configured in Settings.";
-    newInquiry.waStatus = "failure";
-    newInquiry.waError = "No admissions phone number configured in Settings.";
-    console.error(`[NOTIFICATIONS] FAILURE: Cannot send notifications. Phone number is not configured.`);
-    await addNotificationLog({
-      type: "both",
-      recipient: "N/A",
-      inquiryId: newInquiry.id,
-      inquiryName: newInquiry.name,
-      status: "failure",
-      errorMessage: "No admissions phone number configured in Settings."
-    });
-  }
-
-  // Update inquiry notification status in db
-  const freshDb = await getDb();
-  const index = freshDb.inquiries.findIndex((i) => i.id === newInquiry.id);
-  if (index !== -1) {
-    freshDb.inquiries[index] = newInquiry;
-    await saveDb(freshDb);
-  }
+  })().catch(err => {
+    console.error("[db] Background notification pipeline failed:", err);
+  });
 
   return newInquiry;
 }
@@ -889,231 +1142,197 @@ export async function updateInquiryStatus(
   id: string,
   status: Inquiry["status"]
 ): Promise<Inquiry | null> {
-  const db = await getDb();
-  const index = db.inquiries.findIndex((i) => i.id === id);
-  if (index === -1) return null;
-
-  db.inquiries[index].status = status;
-  await saveDb(db);
-  return db.inquiries[index];
+  return await updateInCMSArray<Inquiry>("inquiries", id, { status });
 }
 
 export async function deleteInquiry(id: string): Promise<boolean> {
-  const db = await getDb();
-  const initialLength = db.inquiries.length;
-  db.inquiries = db.inquiries.filter((i) => i.id !== id);
-  await saveDb(db);
-  return db.inquiries.length < initialLength;
+  return await deleteFromCMSArray("inquiries", id);
 }
 
 // Notice (Announcement) Helpers
 export async function getNotices(): Promise<Notice[]> {
-  const db = await getDb();
-  return db.notices || [];
+  return await getCMSValue<Notice[]>("notices", []);
 }
 
 export async function addNotice(noticeData: Omit<Notice, "id" | "date">): Promise<Notice> {
-  const db = await getDb();
-  if (!db.notices) db.notices = [];
   const newNotice: Notice = {
     ...noticeData,
     id: "not_" + Math.random().toString(36).substring(2, 9),
     date: new Date().toISOString().split("T")[0],
   };
-
-  db.notices.unshift(newNotice);
-  await saveDb(db);
+  await appendToCMSArray<Notice>("notices", newNotice, true);
   return newNotice;
 }
 
 export async function updateNotice(id: string, noticeData: Partial<Notice>): Promise<Notice | null> {
-  const db = await getDb();
-  if (!db.notices) return null;
-  const index = db.notices.findIndex((n) => n.id === id);
-  if (index === -1) return null;
-
-  db.notices[index] = {
-    ...db.notices[index],
-    ...noticeData,
-  };
-  await saveDb(db);
-  return db.notices[index];
+  return await updateInCMSArray<Notice>("notices", id, noticeData);
 }
 
 export async function deleteNotice(id: string): Promise<boolean> {
-  const db = await getDb();
-  if (!db.notices) return false;
-  const initialLength = db.notices.length;
-  db.notices = db.notices.filter((n) => n.id !== id);
-  await saveDb(db);
-  return db.notices.length < initialLength;
+  return await deleteFromCMSArray("notices", id);
 }
 
 // Announcement Helpers
 export async function getAnnouncements(): Promise<Notice[]> {
-  const db = await getDb();
-  return db.announcements || [];
+  return await getCMSValue<Notice[]>("announcements", []);
 }
 
 export async function addAnnouncement(annData: Omit<Notice, "id" | "date">): Promise<Notice> {
-  const db = await getDb();
-  if (!db.announcements) db.announcements = [];
   const newAnn: Notice = {
     ...annData,
     id: "ann_" + Math.random().toString(36).substring(2, 9),
     date: new Date().toISOString().split("T")[0],
   };
-
-  db.announcements.unshift(newAnn);
-  await saveDb(db);
+  await appendToCMSArray<Notice>("announcements", newAnn, true);
   return newAnn;
 }
 
 export async function updateAnnouncement(id: string, annData: Partial<Notice>): Promise<Notice | null> {
-  const db = await getDb();
-  if (!db.announcements) return null;
-  const index = db.announcements.findIndex((a) => a.id === id);
-  if (index === -1) return null;
-
-  db.announcements[index] = {
-    ...db.announcements[index],
-    ...annData,
-  };
-  await saveDb(db);
-  return db.announcements[index];
+  return await updateInCMSArray<Notice>("announcements", id, annData);
 }
 
 export async function deleteAnnouncement(id: string): Promise<boolean> {
-  const db = await getDb();
-  if (!db.announcements) return false;
-  const initialLength = db.announcements.length;
-  db.announcements = db.announcements.filter((a) => a.id !== id);
-  await saveDb(db);
-  return db.announcements.length < initialLength;
+  return await deleteFromCMSArray("announcements", id);
 }
 
 // Gallery Helpers
 export async function getGallery(): Promise<GalleryItem[]> {
-  const db = await getDb();
-  return db.gallery || defaultDb.gallery!;
+  return await getCMSValue<GalleryItem[]>("gallery", defaultDb.gallery!);
 }
 
 export async function addGalleryItem(itemData: Omit<GalleryItem, "id">): Promise<GalleryItem> {
-  const db = await getDb();
-  if (!db.gallery) db.gallery = [];
   const newItem: GalleryItem = {
     ...itemData,
     id: "gal_" + Math.random().toString(36).substring(2, 9),
   };
-  db.gallery.unshift(newItem);
-  await saveDb(db);
+  await appendToCMSArray<GalleryItem>("gallery", newItem, true);
   return newItem;
 }
 
 export async function deleteGalleryItem(id: string): Promise<boolean> {
-  const db = await getDb();
-  if (!db.gallery) return false;
-  const initialLength = db.gallery.length;
-  db.gallery = db.gallery.filter((g) => g.id !== id);
-  await saveDb(db);
-  return db.gallery.length < initialLength;
+  return await deleteFromCMSArray("gallery", id);
 }
 
 // Achievement Helpers
 export async function getAchievements(): Promise<Achievement[]> {
-  const db = await getDb();
-  return db.achievements || defaultDb.achievements!;
+  return await getCMSValue<Achievement[]>("achievements", defaultDb.achievements!);
 }
 
 export async function updateAchievement(key: string, value: string): Promise<Achievement | null> {
-  const db = await getDb();
-  const index = db.achievements.findIndex((a) => a.key === key);
+  const achievements = await getAchievements();
+  const index = achievements.findIndex((a) => a.key === key);
   if (index === -1) return null;
 
-  db.achievements[index].value = value;
-  await saveDb(db);
-  return db.achievements[index];
+  achievements[index].value = value;
+  await setCMSValue<Achievement[]>("achievements", achievements);
+  return achievements[index];
 }
 
 // Testimonial Helpers
 export async function getTestimonials(): Promise<Testimonial[]> {
-  const db = await getDb();
-  return db.testimonials || defaultDb.testimonials!;
+  return await getCMSValue<Testimonial[]>("testimonials", defaultDb.testimonials!);
 }
 
 export async function addTestimonial(testimonialData: Omit<Testimonial, "id">): Promise<Testimonial> {
-  const db = await getDb();
   const newTestimonial: Testimonial = {
     ...testimonialData,
     id: "test_" + Math.random().toString(36).substring(2, 9),
   };
-
-  db.testimonials.push(newTestimonial);
-  await saveDb(db);
+  await appendToCMSArray<Testimonial>("testimonials", newTestimonial, false);
   return newTestimonial;
 }
 
 export async function deleteTestimonial(id: string): Promise<boolean> {
-  const db = await getDb();
-  const initialLength = db.testimonials.length;
-  db.testimonials = db.testimonials.filter((t) => t.id !== id);
-  await saveDb(db);
-  return db.testimonials.length < initialLength;
+  return await deleteFromCMSArray("testimonials", id);
 }
 
 // Popup Helpers
 export async function getPopups(): Promise<Popup[]> {
-  const db = await getDb();
-  return db.popups || [];
+  return await getCMSValue<Popup[]>("popups", []);
 }
 
 export async function addPopup(popupData: Omit<Popup, "id" | "createdAt">): Promise<Popup> {
-  const db = await getDb();
-  if (!db.popups) db.popups = [];
-  
   const id = "pop_" + Math.random().toString(36).substring(2, 9);
-  
-  // Deactivate all others if this one is active
-  if (popupData.isActive) {
-    db.popups.forEach(p => p.isActive = false);
-  }
-  
   const newPopup: Popup = {
     ...popupData,
     id,
     createdAt: new Date().toISOString(),
   };
+
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      if (popupData.isActive) {
+        await pool.query(
+          `UPDATE cms_store
+           SET value = (
+             SELECT COALESCE(jsonb_agg(jsonb_set(elem, '{isActive}', 'false'::jsonb)), '[]'::jsonb)
+             FROM jsonb_array_elements(value) elem
+           )
+           WHERE key = 'popups'`
+        );
+      }
+      delete configCache["popups"];
+      await appendToCMSArray<Popup>("popups", newPopup, true);
+      return newPopup;
+    } catch (err) {
+      console.error("[db] Failed to add popup:", err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
+  const db = await getDb();
+  if (!db.popups) db.popups = [];
+  if (popupData.isActive) {
+    db.popups.forEach(p => p.isActive = false);
+  }
   db.popups.unshift(newPopup);
   await saveDb(db);
   return newPopup;
 }
 
 export async function updatePopup(id: string, popupData: Partial<Popup>): Promise<Popup | null> {
+  const pool = getPool();
+  if (pool) {
+    try {
+      await initDbSchema();
+      if (popupData.isActive) {
+        await pool.query(
+          `UPDATE cms_store
+           SET value = (
+             SELECT COALESCE(jsonb_agg(jsonb_set(elem, '{isActive}', 'false'::jsonb)), '[]'::jsonb)
+             FROM jsonb_array_elements(value) elem
+             WHERE elem->>'id' <> $1
+           )
+           WHERE key = 'popups'`,
+          [id]
+        );
+      }
+      delete configCache["popups"];
+      return await updateInCMSArray<Popup>("popups", id, popupData);
+    } catch (err) {
+      console.error("[db] Failed to update popup:", err);
+      throw err;
+    }
+  }
+
+  ensureDbFile();
   const db = await getDb();
   if (!db.popups) return null;
   const index = db.popups.findIndex((p) => p.id === id);
   if (index === -1) return null;
-
-  // Deactivate all others if this one is set to active
   if (popupData.isActive) {
     db.popups.forEach(p => {
       if (p.id !== id) p.isActive = false;
     });
   }
-
-  db.popups[index] = {
-    ...db.popups[index],
-    ...popupData,
-  };
+  db.popups[index] = { ...db.popups[index], ...popupData };
   await saveDb(db);
   return db.popups[index];
 }
 
 export async function deletePopup(id: string): Promise<boolean> {
-  const db = await getDb();
-  if (!db.popups) return false;
-  const initialLength = db.popups.length;
-  db.popups = db.popups.filter((p) => p.id !== id);
-  await saveDb(db);
-  return db.popups.length < initialLength;
+  return await deleteFromCMSArray("popups", id);
 }
