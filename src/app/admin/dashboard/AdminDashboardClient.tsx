@@ -245,8 +245,6 @@ export default function AdminDashboardClient({
       "Query Message",
       "Status",
       "Submission Date",
-      "SMS Status",
-      "WhatsApp Status",
     ];
 
     const rows = inquiries.map((inq) => [
@@ -259,8 +257,6 @@ export default function AdminDashboardClient({
       inq.message.replace(/\r?\n/g, " ").replace(/"/g, '""'),
       inq.status,
       inq.createdAt,
-      inq.smsStatus || "Pending",
-      inq.waStatus || "Pending",
     ]);
 
     const csvContent = [
@@ -1471,7 +1467,6 @@ export default function AdminDashboardClient({
                     <th className="py-4 px-4">Contact Info</th>
                     <th className="py-4 px-4">Grade</th>
                     <th className="py-4 px-4">Date</th>
-                    <th className="py-4 px-4">Delivery Logs</th>
                     <th className="py-4 px-4">Status Action</th>
                     <th className="py-4 px-4 text-right">Delete</th>
                   </tr>
@@ -1500,20 +1495,6 @@ export default function AdminDashboardClient({
                             month: "short",
                             year: "numeric",
                           })}
-                        </td>
-                        <td className="py-4 px-4 leading-relaxed text-[10px] font-bold">
-                          <div className="flex items-center gap-1.5">
-                            <span>SMS:</span>
-                            <span className={inq.smsStatus === "success" ? "text-emerald-600" : "text-red-500"}>
-                              {inq.smsStatus === "success" ? "Sent" : inq.smsError ? "Failed" : "Pending"}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <span>WA:</span>
-                            <span className={inq.waStatus === "success" ? "text-emerald-600" : "text-red-500"}>
-                              {inq.waStatus === "success" ? "Sent" : inq.waError ? "Failed" : "Pending"}
-                            </span>
-                          </div>
                         </td>
                         <td className="py-4 px-4">
                           <select

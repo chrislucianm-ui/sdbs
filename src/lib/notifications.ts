@@ -135,3 +135,38 @@ export async function sendInquiryWhatsAppNotification(inquiry: {
     return { success: false, error: err.message || "Twilio SDK request failed" };
   }
 }
+
+export async function sendTelegramMessage(body: string): Promise<TwilioResult> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) {
+    return {
+      success: false,
+      error: "Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID in environment variables.",
+    };
+  }
+
+  try {
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: body,
+      }),
+    });
+
+    const json = await res.json();
+    if (res.ok && json.ok) {
+      return { success: true, sid: json.result?.message_id?.toString() };
+    } else {
+      return { success: false, error: json.description || `HTTP ${res.status}: ${res.statusText}` };
+    }
+  } catch (err: any) {
+    return { success: false, error: err.message || "Network request failed" };
+  }
+}

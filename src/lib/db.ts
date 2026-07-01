@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { sendTwilioSMS, sendTwilioWhatsApp, sendInquiryWhatsAppNotification } from "./notifications";
+import { sendTwilioSMS, sendTwilioWhatsApp, sendInquiryWhatsAppNotification, sendTelegramMessage } from "./notifications";
 import { Pool } from "pg";
 import { revalidatePath } from "next/cache";
 
@@ -1032,108 +1032,134 @@ export async function addInquiry(
   };
 
   await appendToCMSArray<Inquiry>("inquiries", newInquiry, true);
-
   (async () => {
-    const settings = await getSettings();
-    const admissionsPhone = settings.smsNotificationPhone?.trim();
-    const messageBody = `${settings.schoolName} / ${settings.schoolSubName}: New admission inquiry received for ${newInquiry.grade}. Student: ${newInquiry.name}, Parent: ${newInquiry.parentName || "N/A"}, Phone: ${newInquiry.phone}.`;
-
+    let telegramSuccess = false;
     try {
-      const schoolWaRes = await sendInquiryWhatsAppNotification(newInquiry);
-      if (schoolWaRes.success) {
-        console.log(`[SCHOOL WHATSAPP] SUCCESS: WhatsApp delivered to school (SID: ${schoolWaRes.sid})`);
+      const dateStr = new Date(newInquiry.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+      const telegramBody = `📥 New Admission Inquiry\n\n` +
+        `👤 Student: ${newInquiry.name}\n` +
+        `👨 Parent: ${newInquiry.parentName || "N/A"}\n` +
+        `📞 Phone: ${newInquiry.phone}\n` +
+        `📧 Email: ${newInquiry.email}\n` +
+        `🏫 Class: ${newInquiry.grade}\n` +
+        `📝 Message: ${newInquiry.message || "N/A"}\n\n` +
+        `🕒 Submitted: ${dateStr}`;
+
+      const telRes = await sendTelegramMessage(telegramBody);
+      if (telRes.success) {
+        telegramSuccess = true;
+        console.log(`[TELEGRAM NOTIFICATION] SUCCESS: Telegram message sent successfully (Message ID: ${telRes.sid})`);
       } else {
-        console.error(`[SCHOOL WHATSAPP] FAILURE: WhatsApp delivery failed. Error: ${schoolWaRes.error}`);
+        console.error(`[TELEGRAM NOTIFICATION] FAILURE: Telegram message failed. Error: ${telRes.error}`);
       }
     } catch (e: any) {
-      console.error(`[SCHOOL WHATSAPP] Error sending WhatsApp notification:`, e);
+      console.error(`[TELEGRAM NOTIFICATION] Error sending Telegram message:`, e.message || e);
     }
 
-    if (admissionsPhone) {
-      console.log(`[NOTIFICATIONS] Sending notifications for inquiry ${newInquiry.id} to ${admissionsPhone}...`);
-      
-      let smsSuccess = false;
-      let smsErr: string | undefined;
-      let waSuccess = false;
-      let waErr: string | undefined;
+    // Fallback to Twilio if Telegram failed
+    if (!telegramSuccess) {
+      console.log(`[NOTIFICATIONS] Telegram failed or was not configured. Falling back to Twilio...`);
+      const settings = await getSettings();
+      const admissionsPhone = settings.smsNotificationPhone?.trim();
+      const messageBody = `${settings.schoolName} / ${settings.schoolSubName}: New admission inquiry received for ${newInquiry.grade}. Student: ${newInquiry.name}, Parent: ${newInquiry.parentName || "N/A"}, Phone: ${newInquiry.phone}.`;
 
       try {
-        const smsRes = await sendTwilioSMS(admissionsPhone, messageBody);
-        if (smsRes.success) {
-          smsSuccess = true;
-          await addNotificationLog({
-            type: "sms",
-            recipient: admissionsPhone,
-            inquiryId: newInquiry.id,
-            inquiryName: newInquiry.name,
-            status: "success"
-          });
+        const schoolWaRes = await sendInquiryWhatsAppNotification(newInquiry);
+        if (schoolWaRes.success) {
+          console.log(`[SCHOOL WHATSAPP] SUCCESS: WhatsApp delivered to school (SID: ${schoolWaRes.sid})`);
         } else {
-          smsErr = smsRes.error;
-          await addNotificationLog({
-            type: "sms",
-            recipient: admissionsPhone,
-            inquiryId: newInquiry.id,
-            inquiryName: newInquiry.name,
-            status: "failure",
-            errorMessage: smsRes.error
-          });
+          console.error(`[SCHOOL WHATSAPP] FAILURE: WhatsApp delivery failed. Error: ${schoolWaRes.error}`);
         }
-      } catch (err: any) {
-        smsErr = err.message || "SMS failed";
+      } catch (e: any) {
+        console.error(`[SCHOOL WHATSAPP] Error sending WhatsApp notification:`, e);
       }
 
-      try {
-        const waRes = await sendTwilioWhatsApp(admissionsPhone, messageBody);
-        if (waRes.success) {
-          waSuccess = true;
-          await addNotificationLog({
-            type: "whatsapp",
-            recipient: admissionsPhone,
-            inquiryId: newInquiry.id,
-            inquiryName: newInquiry.name,
-            status: "success"
-          });
-        } else {
-          waErr = waRes.error;
-          await addNotificationLog({
-            type: "whatsapp",
-            recipient: admissionsPhone,
-            inquiryId: newInquiry.id,
-            inquiryName: newInquiry.name,
-            status: "failure",
-            errorMessage: waRes.error
-          });
-        }
-      } catch (err: any) {
-        waErr = err.message || "WhatsApp failed";
-      }
+      if (admissionsPhone) {
+        console.log(`[NOTIFICATIONS] Sending notifications for inquiry ${newInquiry.id} to ${admissionsPhone}...`);
+        
+        let smsSuccess = false;
+        let smsErr: string | undefined;
+        let waSuccess = false;
+        let waErr: string | undefined;
 
-      await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
-        smsStatus: smsSuccess ? "success" : "failure",
-        smsError: smsErr,
-        waStatus: waSuccess ? "success" : "failure",
-        waError: waErr
-      });
-    } else {
-      await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
-        smsStatus: "failure",
-        smsError: "No admissions phone number configured in Settings.",
-        waStatus: "failure",
-        waError: "No admissions phone number configured in Settings."
-      });
-      await addNotificationLog({
-        type: "both",
-        recipient: "N/A",
-        inquiryId: newInquiry.id,
-        inquiryName: newInquiry.name,
-        status: "failure",
-        errorMessage: "No admissions phone number configured in Settings."
-      });
+        try {
+          const smsRes = await sendTwilioSMS(admissionsPhone, messageBody);
+          if (smsRes.success) {
+            smsSuccess = true;
+            await addNotificationLog({
+              type: "sms",
+              recipient: admissionsPhone,
+              inquiryId: newInquiry.id,
+              inquiryName: newInquiry.name,
+              status: "success"
+            });
+          } else {
+            smsErr = smsRes.error;
+            await addNotificationLog({
+              type: "sms",
+              recipient: admissionsPhone,
+              inquiryId: newInquiry.id,
+              inquiryName: newInquiry.name,
+              status: "failure",
+              errorMessage: smsRes.error
+            });
+          }
+        } catch (err: any) {
+          smsErr = err.message || "SMS failed";
+        }
+
+        try {
+          const waRes = await sendTwilioWhatsApp(admissionsPhone, messageBody);
+          if (waRes.success) {
+            waSuccess = true;
+            await addNotificationLog({
+              type: "whatsapp",
+              recipient: admissionsPhone,
+              inquiryId: newInquiry.id,
+              inquiryName: newInquiry.name,
+              status: "success"
+            });
+          } else {
+            waErr = waRes.error;
+            await addNotificationLog({
+              type: "whatsapp",
+              recipient: admissionsPhone,
+              inquiryId: newInquiry.id,
+              inquiryName: newInquiry.name,
+              status: "failure",
+              errorMessage: waRes.error
+            });
+          }
+        } catch (err: any) {
+          waErr = err.message || "WhatsApp failed";
+        }
+
+        await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
+          smsStatus: smsSuccess ? "success" : "failure",
+          smsError: smsErr,
+          waStatus: waSuccess ? "success" : "failure",
+          waError: waErr
+        });
+      } else {
+        await updateInCMSArray<Inquiry>("inquiries", newInquiry.id, {
+          smsStatus: "failure",
+          smsError: "No admissions phone number configured in Settings.",
+          waStatus: "failure",
+          waError: "No admissions phone number configured in Settings."
+        });
+        await addNotificationLog({
+          type: "both",
+          recipient: "N/A",
+          inquiryId: newInquiry.id,
+          inquiryName: newInquiry.name,
+          status: "failure",
+          errorMessage: "No admissions phone number configured in Settings."
+        });
+      }
     }
   })().catch(err => {
     console.error("[db] Background notification pipeline failed:", err);
-  });
+  });;
 
   return newInquiry;
 }
