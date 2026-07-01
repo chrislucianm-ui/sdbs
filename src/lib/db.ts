@@ -1035,11 +1035,33 @@ export async function addInquiry(
   (async () => {
     let telegramSuccess = false;
     try {
-      const dateStr = new Date(newInquiry.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-      const telegramBody = `📥 New Admission Inquiry\n\n` +
+      let formattedPhone = newInquiry.phone.trim().replace(/[\s\-\(\)]/g, "");
+      if (!formattedPhone.startsWith("+")) {
+        if (formattedPhone.startsWith("0") && formattedPhone.length === 11) {
+          formattedPhone = formattedPhone.slice(1);
+        }
+        if (formattedPhone.length === 10) {
+          formattedPhone = "+91" + formattedPhone;
+        } else if (formattedPhone.startsWith("91") && formattedPhone.length === 12) {
+          formattedPhone = "+" + formattedPhone;
+        }
+      }
+
+      const date = new Date(newInquiry.createdAt);
+      const dateStr = new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      }).format(date).toUpperCase();
+
+      const telegramBody = `📬 New Admission Inquiry\n\n` +
         `👤 Student: ${newInquiry.name}\n` +
         `👨 Parent: ${newInquiry.parentName || "N/A"}\n` +
-        `📞 Phone: ${newInquiry.phone}\n` +
+        `📞 Phone: ${formattedPhone}\n` +
         `📧 Email: ${newInquiry.email}\n` +
         `🏫 Class: ${newInquiry.grade}\n` +
         `📝 Message: ${newInquiry.message || "N/A"}\n\n` +
