@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { getAdminRole } from "@/app/actions";
 import { getPool, initDbSchema } from "./db";
+import sharp from "sharp";
 
 function getMimeType(ext: string): string {
   switch (ext.toLowerCase()) {
@@ -56,9 +57,9 @@ export async function uploadFileAction(formData: FormData): Promise<{ success: b
     return { success: false, error: "No file provided" };
   }
 
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  const MAX_SIZE = 25 * 1024 * 1024; // 25MB
   if (file.size > MAX_SIZE) {
-    return { success: false, error: "File size exceeds the 10MB limit." };
+    return { success: false, error: "File size exceeds the 25MB limit." };
   }
 
   const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".pdf"];
@@ -70,6 +71,31 @@ export async function uploadFileAction(formData: FormData): Promise<{ success: b
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    let finalBuffer = buffer;
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+    if (imageExtensions.includes(ext)) {
+      try {
+        console.log(`[FILE UPLOAD] Optimizing image: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`);
+        const sharpInstance = sharp(buffer).resize({
+          width: 1920,
+          height: 1920,
+          fit: "inside",
+          withoutEnlargement: true,
+        });
+
+        if (ext === ".jpg" || ext === ".jpeg") {
+          finalBuffer = await sharpInstance.jpeg({ quality: 80, progressive: true }).toBuffer();
+        } else if (ext === ".png") {
+          finalBuffer = await sharpInstance.png({ quality: 80, compressionLevel: 8 }).toBuffer();
+        } else if (ext === ".webp") {
+          finalBuffer = await sharpInstance.webp({ quality: 80 }).toBuffer();
+        }
+        console.log(`[FILE UPLOAD] Image optimized successfully. New size: ${(finalBuffer.length / (1024 * 1024)).toFixed(2)} MB`);
+      } catch (err: any) {
+        console.error("[FILE UPLOAD] Image optimization failed, saving original instead:", err);
+      }
+    }
 
     const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
     const relativePath = `/uploads/${filename}`;
@@ -84,12 +110,12 @@ export async function uploadFileAction(formData: FormData): Promise<{ success: b
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    await fs.promises.writeFile(absolutePath, buffer);
+    await fs.promises.writeFile(absolutePath, finalBuffer);
     console.log(`[FILE UPLOAD] Saved ${file.name} to ${relativePath}`);
 
     // Persistent Database upload
     const mimeType = getMimeType(ext);
-    await saveFileToDb(filename, buffer, mimeType);
+    await saveFileToDb(filename, finalBuffer, mimeType);
     
     return { success: true, url: relativePath };
   } catch (error: any) {
@@ -109,10 +135,10 @@ export async function uploadPopupFileAction(formData: FormData): Promise<{ succe
     return { success: false, error: "No file provided" };
   }
 
-  // Strict 5MB limit for Popups
-  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  // Strict 25MB limit for Popups
+  const MAX_SIZE = 25 * 1024 * 1024; // 25MB
   if (file.size > MAX_SIZE) {
-    return { success: false, error: "File size exceeds the 5MB limit." };
+    return { success: false, error: "File size exceeds the 25MB limit." };
   }
 
   const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
@@ -124,6 +150,31 @@ export async function uploadPopupFileAction(formData: FormData): Promise<{ succe
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+
+    let finalBuffer = buffer;
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+    if (imageExtensions.includes(ext)) {
+      try {
+        console.log(`[POPUP FILE UPLOAD] Optimizing image: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`);
+        const sharpInstance = sharp(buffer).resize({
+          width: 1920,
+          height: 1920,
+          fit: "inside",
+          withoutEnlargement: true,
+        });
+
+        if (ext === ".jpg" || ext === ".jpeg") {
+          finalBuffer = await sharpInstance.jpeg({ quality: 80, progressive: true }).toBuffer();
+        } else if (ext === ".png") {
+          finalBuffer = await sharpInstance.png({ quality: 80, compressionLevel: 8 }).toBuffer();
+        } else if (ext === ".webp") {
+          finalBuffer = await sharpInstance.webp({ quality: 80 }).toBuffer();
+        }
+        console.log(`[POPUP FILE UPLOAD] Image optimized successfully. New size: ${(finalBuffer.length / (1024 * 1024)).toFixed(2)} MB`);
+      } catch (err: any) {
+        console.error("[POPUP FILE UPLOAD] Image optimization failed, saving original instead:", err);
+      }
+    }
 
     const filename = `popup_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
     const relativePath = `/uploads/${filename}`;
@@ -138,12 +189,12 @@ export async function uploadPopupFileAction(formData: FormData): Promise<{ succe
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    await fs.promises.writeFile(absolutePath, buffer);
+    await fs.promises.writeFile(absolutePath, finalBuffer);
     console.log(`[POPUP FILE UPLOAD] Saved ${file.name} to ${relativePath}`);
 
     // Persistent Database upload
     const mimeType = getMimeType(ext);
-    await saveFileToDb(filename, buffer, mimeType);
+    await saveFileToDb(filename, finalBuffer, mimeType);
     
     return { success: true, url: relativePath };
   } catch (error: any) {

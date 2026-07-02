@@ -372,16 +372,142 @@ export default function AdminDashboardClient({
   const [editingNoticeId, setEditingNoticeId] = useState<string | null>(null);
   const [pdfUploading, setPdfUploading] = useState(false);
   const [noticesMode, setNoticesMode] = useState<"notices" | "announcements">("notices");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
+  const prepareFileForUpload = async (file: File): Promise<File> => {
+    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+    
+    if (!imageExtensions.includes(ext) || file.size <= 3.5 * 1024 * 1024) {
+      return file;
+    }
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          
+          const MAX_DIM = 2560;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            resolve(file);
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const mimeType = file.type || "image/jpeg";
+          const exportMime = mimeType === "image/png" ? "image/png" : "image/jpeg";
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                if (mimeType === "image/png" && blob.size > 3.5 * 1024 * 1024) {
+                  canvas.toBlob(
+                    (jpgBlob) => {
+                      if (jpgBlob) {
+                        const newName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+                        resolve(new File([jpgBlob], newName, { type: "image/jpeg", lastModified: Date.now() }));
+                      } else {
+                        resolve(file);
+                      }
+                    },
+                    "image/jpeg",
+                    0.8
+                  );
+                } else {
+                  const newName = exportMime === "image/jpeg" && !file.name.toLowerCase().endsWith(".jpg") && !file.name.toLowerCase().endsWith(".jpeg")
+                    ? file.name.replace(/\.[^/.]+$/, "") + ".jpg"
+                    : file.name;
+                  resolve(new File([blob], newName, { type: exportMime, lastModified: Date.now() }));
+                }
+              } else {
+                resolve(file);
+              }
+            },
+            exportMime,
+            0.8
+          );
+        };
+        img.onerror = () => resolve(file);
+      };
+      reader.onerror = () => resolve(file);
+    });
+  };
+
+  const uploadFileWithProgress = (
+    file: File,
+    isPopup = false
+  ): Promise<{ success: boolean; url?: string; error?: string }> => {
+    return new Promise((resolve) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/upload");
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        setUploadProgress(null);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve(res);
+          } catch (err) {
+            resolve({ success: false, error: "Failed to parse upload response." });
+          }
+        } else {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve({ success: false, error: res.error || `Upload failed with status ${xhr.status}` });
+          } catch (err) {
+            resolve({ success: false, error: `Upload failed with status ${xhr.status}` });
+          }
+        }
+      };
+
+      xhr.onerror = () => {
+        setUploadProgress(null);
+        resolve({ success: false, error: "Network error occurred during upload." });
+      };
+
+      const formData = new FormData();
+      formData.append("file", file);
+      if (isPopup) {
+        formData.append("isPopup", "true");
+      }
+
+      xhr.send(formData);
+    });
+  };
 
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setPdfUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await uploadFileAction(formData);
+    const res = await uploadFileWithProgress(file);
     setPdfUploading(false);
 
     if (res.success && res.url) {
@@ -564,23 +690,26 @@ export default function AdminDashboardClient({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      triggerAlert("File size exceeds the 5MB limit.", false);
+    const MAX_SIZE = 25 * 1024 * 1024; // 25MB
+    if (file.size > MAX_SIZE) {
+      triggerAlert("File size exceeds the 25MB limit.", false);
       return;
     }
 
     setPopupUploadLoading("image");
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await uploadPopupFileAction(formData);
-    setPopupUploadLoading(null);
-
-    if (res.success && res.url) {
-      setPopupForm((prev) => ({ ...prev, imageUrl: res.url! }));
-      triggerAlert("Image uploaded successfully.");
-    } else {
-      triggerAlert(res.error || "Failed to upload file.", false);
+    try {
+      const preparedFile = await prepareFileForUpload(file);
+      const res = await uploadFileWithProgress(preparedFile, true);
+      if (res.success && res.url) {
+        setPopupForm((prev) => ({ ...prev, imageUrl: res.url! }));
+        triggerAlert("Image uploaded successfully.");
+      } else {
+        triggerAlert(res.error || "Failed to upload file.", false);
+      }
+    } catch {
+      triggerAlert("Upload error.", false);
+    } finally {
+      setPopupUploadLoading(null);
     }
   };
 
@@ -720,19 +849,16 @@ export default function AdminDashboardClient({
 
     setImageCompressing(true);
     try {
-      const compressed = await compressImage(file);
-      const formData = new FormData();
-      formData.append("file", compressed);
-
-      const res = await uploadFileAction(formData);
+      const preparedFile = await prepareFileForUpload(file);
+      const res = await uploadFileWithProgress(preparedFile);
       if (res.success && res.url) {
         setNewGalleryItem((prev) => ({ ...prev, url: res.url! }));
-        triggerAlert("Compressed gallery image uploaded.");
+        triggerAlert("Gallery image uploaded successfully.");
       } else {
         triggerAlert(res.error || "Failed to upload image.", false);
       }
     } catch (err) {
-      triggerAlert("Image compression error.", false);
+      triggerAlert("Image upload error.", false);
     } finally {
       setImageCompressing(false);
     }
@@ -811,18 +937,16 @@ export default function AdminDashboardClient({
 
     setLoading("director-photo-upload");
     try {
-      const compressed = await compressImage(file);
-      const formData = new FormData();
-      formData.append("file", compressed);
-      const res = await uploadFileAction(formData);
+      const preparedFile = await prepareFileForUpload(file);
+      const res = await uploadFileWithProgress(preparedFile);
       if (res.success && res.url) {
         setDirectorForm((prev) => ({ ...prev, photo: res.url! }));
-        triggerAlert("Director's compressed photo uploaded.");
+        triggerAlert("Director's photo uploaded.");
       } else {
         triggerAlert(res.error || "Failed to upload photo.", false);
       }
     } catch {
-      triggerAlert("Compression failed.", false);
+      triggerAlert("Upload failed.", false);
     } finally {
       setLoading(null);
     }
@@ -908,16 +1032,16 @@ export default function AdminDashboardClient({
 
     setLoading("logo-upload");
     try {
-      const compressed = await compressImage(file);
-      const formData = new FormData();
-      formData.append("file", compressed);
-      const res = await uploadFileAction(formData);
+      const preparedFile = await prepareFileForUpload(file);
+      const res = await uploadFileWithProgress(preparedFile);
       if (res.success && res.url) {
         setBrandingForm((prev) => ({ ...prev, schoolLogo: res.url! }));
         triggerAlert("School Logo uploaded.");
+      } else {
+        triggerAlert(res.error || "Failed to upload logo.", false);
       }
     } catch {
-      triggerAlert("Logo compression error.", false);
+      triggerAlert("Logo upload error.", false);
     } finally {
       setLoading(null);
     }
@@ -928,13 +1052,18 @@ export default function AdminDashboardClient({
     if (!file) return;
 
     setLoading("favicon-upload");
-    const formData = new FormData();
-    formData.append("file", file); // do not compress favicons
-    const res = await uploadFileAction(formData);
-    setLoading(null);
-    if (res.success && res.url) {
-      setBrandingForm((prev) => ({ ...prev, faviconUrl: res.url! }));
-      triggerAlert("Favicon uploaded successfully.");
+    try {
+      const res = await uploadFileWithProgress(file);
+      if (res.success && res.url) {
+        setBrandingForm((prev) => ({ ...prev, faviconUrl: res.url! }));
+        triggerAlert("Favicon uploaded successfully.");
+      } else {
+        triggerAlert(res.error || "Failed to upload favicon.", false);
+      }
+    } catch {
+      triggerAlert("Favicon upload error.", false);
+    } finally {
+      setLoading(null);
     }
   };
 
@@ -3239,6 +3368,23 @@ export default function AdminDashboardClient({
           </div>
         )}
 
+        {uploadProgress !== null && (
+          <div className="fixed bottom-6 right-6 z-[9999] bg-navy-900 text-white px-5 py-4 rounded-2xl shadow-2xl border border-gold-500/30 flex flex-col gap-2 min-w-[280px] animate-in fade-in slide-in-from-bottom-5 duration-300">
+            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+              <span className="flex items-center gap-2">
+                <Loader2 className="animate-spin text-gold-500" size={14} />
+                Uploading file...
+              </span>
+              <span className="text-gold-400">{uploadProgress}%</span>
+            </div>
+            <div className="w-full bg-navy-950/50 rounded-full h-1.5 overflow-hidden">
+              <div 
+                className="bg-gold-500 h-full transition-all duration-150 ease-out" 
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
