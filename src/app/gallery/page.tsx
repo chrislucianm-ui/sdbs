@@ -2,8 +2,17 @@ import * as db from "@/lib/db";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GalleryClient from "./GalleryClient";
+import { Metadata } from "next";
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "School Gallery | Campus & Events Tour",
+  description: "Explore campus life, classrooms, facilities, sports events, and academic activities at St. John Bosco School & St. D.B. Inter College.",
+  alternates: {
+    canonical: "/gallery",
+  },
+};
 
 export default async function GalleryPage() {
   const settings = await db.getSettings();
@@ -54,6 +63,29 @@ export default async function GalleryPage() {
         schoolSubName={settings.schoolSubName}
         schoolLogo={settings.schoolLogo}
         copyrightText={settings.copyrightText}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://stdbintercollege.org"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Gallery",
+                "item": "https://stdbintercollege.org/gallery"
+              }
+            ]
+          })
+        }}
       />
     </>
   );

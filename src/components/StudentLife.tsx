@@ -93,6 +93,7 @@ export default function StudentLife() {
               <img
                 src={item.image}
                 alt={item.title}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 onError={(e) => {
                   e.currentTarget.src = "/campus.jpg";

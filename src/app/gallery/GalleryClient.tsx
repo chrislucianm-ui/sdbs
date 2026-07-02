@@ -154,6 +154,7 @@ export default function GalleryClient({ galleryItems = [] }: GalleryClientProps)
                 <img
                   src={getThumbnailUrl(item)}
                   alt={item.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
                   onError={(e) => {
                     e.currentTarget.src = "/campus.jpg";

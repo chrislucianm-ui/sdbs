@@ -65,6 +65,7 @@ export default function About({ directorsMessage = defaultMessage }: AboutProps)
                   <img
                     src={directorsMessage.photo}
                     alt={`Director ${directorsMessage.name}`}
+                    loading="lazy"
                     className="w-full h-full object-cover object-[center_top] scale-100 hover:scale-105 transition-transform duration-700 ease-out"
                     onError={(e) => {
                       e.currentTarget.src = "/director.jpg";

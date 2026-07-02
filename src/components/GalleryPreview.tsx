@@ -50,6 +50,7 @@ export default function GalleryPreview({ galleryItems = [] }: GalleryPreviewProp
                 <img
                   src={item.url}
                   alt={item.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.src = "/campus.jpg";

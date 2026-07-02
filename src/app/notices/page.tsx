@@ -9,7 +9,10 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Official Bulletins & Notices | St. John Bosco School",
-  description: "Browse academic bulletins, state secondary board directives, and general school notices.",
+  description: "Browse academic bulletins, board directives, exam timetables, and general school notices of St. John Bosco School & St. D.B. Inter College.",
+  alternates: {
+    canonical: "/notices",
+  },
 };
 
 export default async function NoticesPage() {
@@ -47,6 +50,29 @@ export default async function NoticesPage() {
         copyrightText={settings.copyrightText}
       />
       <WhatsAppButton whatsappNumber={contactInfo.whatsappNumber} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://stdbintercollege.org"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Notices",
+                "item": "https://stdbintercollege.org/notices"
+              }
+            ]
+          })
+        }}
+      />
     </>
   );
 }

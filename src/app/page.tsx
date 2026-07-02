@@ -120,6 +120,58 @@ export default async function Home() {
       
       {/* Frontend popups system */}
       <PopupOverlay />
+
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": ["School", "EducationalOrganization", "Organization"],
+                "@id": "https://stdbintercollege.org/#school",
+                "name": settings.schoolName || "St. D.B. Inter College",
+                "alternateName": settings.schoolSubName || "St. John Bosco School",
+                "url": "https://stdbintercollege.org",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": settings.schoolLogo ? (settings.schoolLogo.startsWith("http") ? settings.schoolLogo : `https://stdbintercollege.org${settings.schoolLogo}`) : "https://stdbintercollege.org/logo.jpg"
+                },
+                "image": settings.schoolLogo ? (settings.schoolLogo.startsWith("http") ? settings.schoolLogo : `https://stdbintercollege.org${settings.schoolLogo}`) : "https://stdbintercollege.org/logo.jpg",
+                "description": "Educational portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Shaping future leaders through academic and holistic excellence.",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "Naini",
+                  "addressLocality": "Prayagraj",
+                  "addressRegion": "Uttar Pradesh",
+                  "postalCode": "211008",
+                  "addressCountry": "IN"
+                },
+                "telephone": contactInfo.phoneNumbers?.[0] || "",
+                "email": contactInfo.emails?.[0] || "",
+                "sameAs": [
+                  settings.facebookUrl || "",
+                  settings.instagramUrl || "",
+                  settings.youtubeUrl || ""
+                ].filter(Boolean)
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": "https://stdbintercollege.org/#breadcrumb",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://stdbintercollege.org"
+                  }
+                ]
+              }
+            ]
+          })
+        }}
+      />
     </>
   );
 }
