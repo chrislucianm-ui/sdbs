@@ -7,6 +7,50 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "30mb"
     }
+  },
+  async redirects() {
+    return [
+      {
+        source: "/about",
+        destination: "/#about",
+        permanent: true,
+      },
+      {
+        source: "/updates",
+        destination: "/announcements",
+        permanent: true,
+      },
+      {
+        source: "/why-us",
+        destination: "/#why-choose-us",
+        permanent: true,
+      },
+      {
+        source: "/academics",
+        destination: "/#academics",
+        permanent: true,
+      },
+      {
+        source: "/student-life",
+        destination: "/#student-life",
+        permanent: true,
+      },
+      {
+        source: "/campus-tour",
+        destination: "/#campus",
+        permanent: true,
+      },
+      {
+        source: "/admissions",
+        destination: "/#admissions",
+        permanent: true,
+      },
+      {
+        source: "/contact",
+        destination: "/#contact",
+        permanent: true,
+      },
+    ];
   }
 };
 
