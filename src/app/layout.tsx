@@ -28,29 +28,34 @@ export const metadata: Metadata = {
     template: "%s | St. D.B. Inter College & St. John Bosco School"
   },
   description:
-    "Educational portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Shaping future leaders through academic and holistic excellence.",
+    "Official portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Recognized as the Best School in Prayagraj offering quality education. Admissions 2026 open now for CBSE School Prayagraj and UP Board streams. Best School in Naini.",
   keywords: [
-    "St. D.B. Inter College",
     "St. John Bosco School",
-    "Naini school",
-    "Prayagraj schools",
-    "Best inter college Prayagraj",
+    "St. D.B. Inter College",
+    "CBSE School Prayagraj",
+    "Best School in Prayagraj",
+    "School in Naini",
+    "Admissions 2026",
+    "Best School in Naini Prayagraj",
+    "Naini Prayagraj Uttar Pradesh India",
     "Bosco school Naini",
-    "Admissions 2026 Prayagraj",
-    "UP Board School Naini",
-    "Inter College Prayagraj",
     "Co-educational school Prayagraj"
   ],
   authors: [{ name: "School IT Cell" }],
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logo.jpg",
+  },
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://stdbintercollege.org",
     title: "St. D.B. Inter College & St. John Bosco School | Prayagraj",
-    description: "Educational portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Shaping future leaders through academic and holistic excellence.",
+    description: "Official portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Best School in Prayagraj offering CBSE School Prayagraj & UP Board streams. Admissions 2026 open now.",
     siteName: "St. D.B. Inter College",
     images: [
       {
@@ -64,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "St. D.B. Inter College & St. John Bosco School | Prayagraj",
-    description: "Shaping future leaders through academic and holistic excellence at Naini, Prayagraj.",
+    description: "Shaping future leaders through academic and holistic excellence at Naini, Prayagraj. CBSE School Prayagraj & UP Board streams. Admissions 2026 Open.",
     images: ["/logo.jpg"],
   }
 };

@@ -1,0 +1,16 @@
+{
+  "name": "St. D.B. Inter College & St. John Bosco School",
+  "short_name": "Bosco School",
+  "description": "Educational portal for St. D.B. Inter College & St. John Bosco School, Naini, Prayagraj. Shaping future leaders through academic and holistic excellence.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1329",
+  "theme_color": "#0b1329",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
